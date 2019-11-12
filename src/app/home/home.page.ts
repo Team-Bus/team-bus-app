@@ -1,6 +1,7 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { environment } from '../../environments/environment';
+import { DrawerState } from 'ion-bottom-drawer';
 import mapboxgl from 'mapbox-gl';
 
 @Component({
@@ -9,6 +10,16 @@ import mapboxgl from 'mapbox-gl';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage {
+
+  shouldBounce = true;
+  disableDrag = false;
+  dockedHeight = 250;
+  distanceTop = 50;
+  drawerState = DrawerState.Bottom;
+  states = DrawerState;
+  minimumHeight = 170;
+
+
   @ViewChild('map', { static: false }) map: ElementRef;
 
   constructor(public navCtrl: NavController) { }

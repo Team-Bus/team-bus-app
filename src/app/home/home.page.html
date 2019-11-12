@@ -2,5 +2,33 @@
 </ion-header>
 
 <ion-content no-bounce>
+  <ion-searchbar #searchBar class="searchBar"></ion-searchbar>
   <div #map class="map"></div>
+  <ion-bottom-drawer [disableDrag]="disableDrag" [(state)]="drawerState" [minimumHeight]="minimumHeight"
+    [dockedHeight]="dockedHeight" [shouldBounce]="shouldBounce" [distanceTop]="distanceTop">
+    <div class="drawer-content">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Mullins Center</ion-card-title>
+          <ion-card-subtitle>0.2mi away</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-list>
+            <ion-item>
+              34
+            </ion-item>
+            <ion-item>
+              34
+            </ion-item>
+            <ion-item>
+              34
+            </ion-item>
+            <ion-item>
+              34
+            </ion-item>
+          </ion-list>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </ion-bottom-drawer>
 </ion-content>

@@ -4,6 +4,8 @@ import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
+import { IonBottomDrawerModule } from 'ion-bottom-drawer';
+
 import { HomePage } from './home.page';
 
 @NgModule({
@@ -11,6 +13,7 @@ import { HomePage } from './home.page';
     CommonModule,
     FormsModule,
     IonicModule,
+    IonBottomDrawerModule,
     RouterModule.forChild([
       {
         path: '',

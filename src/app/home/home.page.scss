@@ -1,8 +1,21 @@
 .map {
     width: 100%;
     height: 100%;
+    position: absolute;
 }
 
 .noScroll {
     overflow: hidden;
+}
+
+.searchBar {
+    background: transparent;
+}
+
+ion-content {
+    --overflow: hidden;
+}
+
+.ion-bottom-drawer {
+    overflow:auto;
 }
