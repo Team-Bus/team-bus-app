@@ -1,0 +1,8 @@
+{
+  "appId": "com.cs.teambus",
+  "appName": "TeamBus",
+  "bundledWebRuntime": false,
+  "npmClient": "npm",
+  "webDir": "www",
+  "cordova": {}
+}
