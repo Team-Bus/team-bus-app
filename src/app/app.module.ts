@@ -14,7 +14,9 @@ import { IonBottomDrawerModule } from 'ion-bottom-drawer';
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, IonBottomDrawerModule],
+  imports: [BrowserModule, IonicModule.forRoot({
+    mode: 'md'
+  }), AppRoutingModule, IonBottomDrawerModule],
   providers: [
     StatusBar,
     SplashScreen,

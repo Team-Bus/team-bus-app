@@ -9,7 +9,8 @@
 }
 
 .searchBar {
-    background: transparent;
+    position: absolute;
+    z-index: 100;
 }
 
 ion-content {

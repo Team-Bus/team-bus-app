@@ -17,7 +17,7 @@ export class HomePage {
   distanceTop = 50;
   drawerState = DrawerState.Bottom;
   states = DrawerState;
-  minimumHeight = 170;
+  minimumHeight = 140;
 
 
   @ViewChild('map', { static: false }) map: ElementRef;
