@@ -3,6 +3,7 @@ import { NavController } from '@ionic/angular';
 import { environment } from '../../environments/environment';
 import { DrawerState } from 'ion-bottom-drawer';
 import mapboxgl from 'mapbox-gl';
+import { BusapiService } from '../busapi.service';
 
 @Component({
   selector: 'app-home',
@@ -22,9 +23,13 @@ export class HomePage {
 
   @ViewChild('map', { static: false }) map: ElementRef;
 
-  constructor(public navCtrl: NavController) { }
+  constructor(public navCtrl: NavController, private busService: BusapiService) { }
 
   ionViewDidEnter() {
+
+    this.busService.getBuses();
+
+    console.log(this.busService.sortedBuses);
 
     // Token from Jacob's Mapbox Account
     mapboxgl.accessToken = environment.mapbox.accessToken;
@@ -35,36 +40,21 @@ export class HomePage {
       zoom: 13
     });
 
+    // ../assets/bus.png
+
     map.on('load', () => {
-      map.loadImage("../assets/bus.png", function (error, image) {
-        if (error) throw error;
-        map.addImage("custom-marker", image);
-        /* Style layer: A style layer ties together the source and image and specifies how they are displayed on the map. */
-        map.addLayer({
-          id: "markers",
-          type: "symbol",
-          /* Source: A data source specifies the geographic coordinate where the image marker gets placed. */
-          source: {
-            type: "geojson",
-            data: {
-              type: 'FeatureCollection',
-              features: [
-                {
-                  type: 'Feature',
-                  properties: {},
-                  geometry: {
-                    type: "Point",
-                    coordinates: [-72.533051, 42.393484]
-                  }
-                }
-              ]
-            }
-          },
-          layout: {
-            "icon-image": "custom-marker",
-            "icon-size": 0.05
-          }
-        });
+
+      this.busService.sortedBuses.forEach((bus) => {
+
+        var el = document.createElement('div');
+        el.className = 'marker';
+        el.style.background = '#' + bus.Color;
+        el.style.width = '10px';
+        el.style.height = '10px';
+  
+        new mapboxgl.Marker(el, {offset: [0, 0]})
+          .setLngLat([bus.Longitude,bus.Latitude])
+          .addTo(map);
       });
     });
   }

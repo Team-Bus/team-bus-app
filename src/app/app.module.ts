@@ -10,17 +10,22 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 
 import { IonBottomDrawerModule } from 'ion-bottom-drawer';
+import { BusapiService } from './busapi.service';
+
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
-  imports: [BrowserModule, IonicModule.forRoot({
+  imports: [BrowserModule, HttpClientModule, IonicModule.forRoot({
     mode: 'md'
   }), AppRoutingModule, IonBottomDrawerModule],
   providers: [
     StatusBar,
     SplashScreen,
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
+    HttpClientModule,
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    BusapiService
   ],
   bootstrap: [AppComponent]
 })
