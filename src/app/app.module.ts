@@ -14,6 +14,8 @@ import { BusapiService } from './busapi.service';
 
 import { HttpClientModule } from '@angular/common/http';
 
+import { Geolocation } from '@ionic-native/geolocation/ngx';
+
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
@@ -25,7 +27,8 @@ import { HttpClientModule } from '@angular/common/http';
     SplashScreen,
     HttpClientModule,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    BusapiService
+    BusapiService,
+    Geolocation
   ],
   bootstrap: [AppComponent]
 })

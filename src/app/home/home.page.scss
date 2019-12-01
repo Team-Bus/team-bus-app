@@ -20,3 +20,18 @@ ion-content {
 .ion-bottom-drawer {
     overflow:auto;
 }
+
+.image-container {
+    position: relative;
+    text-align: center;
+}
+
+#bus {
+    fill: black;
+}
+
+.passengerChip {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
