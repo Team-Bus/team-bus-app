@@ -68,7 +68,7 @@ export class BusapiService {
     return new Promise(resolve => {
       let departureRequest = this.httpClient.get('http://team-bus-backend.herokuapp.com/api/stop/departures/' + stopID);
       departureRequest.subscribe(data => {
-
+        this.arrivalBuses = [];
         let departures = data['RouteDirections'][0]['Departures'];
 
         console.log(departures);
@@ -76,13 +76,13 @@ export class BusapiService {
 
         departures.forEach(depart => {
 
-          let tripid = depart['Trip']['TripId'];
+          let tripid = depart['Trip']['BlockFareboxId'];
 
           let matchingBus = null;
 
           this.sortedBuses.forEach(bus => {
 
-            if (bus.TripId == tripid) {
+            if (bus.BlockFareboxId == tripid) {
 
               matchingBus = bus;
             }
@@ -91,9 +91,8 @@ export class BusapiService {
           let etaDate = new Date(depart['ETALocalTime']);
           let staDate = new Date(depart['STALocalTime']);
 
-          let eta = (etaDate.getHours() <= 12 ? etaDate.getHours : etaDate.getHours() - 12) + ":" + etaDate.getMinutes() + (etaDate.getHours() <= 12 ? " AM" : " PM");
-          let sta = (staDate.getHours() <= 12 ? staDate.getHours : staDate.getHours() - 12) + ":" + staDate.getMinutes() + (staDate.getHours() <= 12 ? " AM" : " PM");
-
+          let eta = (etaDate.getHours() < 12 ? etaDate.getHours() : etaDate.getHours() - 12) + ":" + ("0" + etaDate.getMinutes()).slice(-2) + (etaDate.getHours() <= 12 ? " AM" : " PM");
+          let sta = (staDate.getHours() < 12 ? staDate.getHours() : staDate.getHours() - 12) + ":" + ("0" + staDate.getMinutes()).slice(-2) + (staDate.getHours() <= 12 ? " AM" : " PM");
 
           let departure = new Departure(matchingBus, eta, sta, depart['Dev']);
 
@@ -156,7 +155,7 @@ export class Bus {
   Color: string
   RouteShortName: string
   Deviation: string
-  TripId: number
+  BlockFareboxId: number
 
   constructor(values: Object = {}) {
     Object.assign(this, values);

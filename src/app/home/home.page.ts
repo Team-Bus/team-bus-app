@@ -304,5 +304,4 @@ export class HomePage {
     });
     this.drawerState = DrawerState.Docked;
   }
-
 }
