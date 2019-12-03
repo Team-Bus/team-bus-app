@@ -21,11 +21,6 @@ ion-content {
     overflow:auto;
 }
 
-.image-container {
-    position: relative;
-    text-align: center;
-}
-
 #bus {
     fill: black;
 }
@@ -34,4 +29,20 @@ ion-content {
     position: absolute;
     top: 25%;
     right: 5px;
+}
+
+svg .rotate {
+    transform-box: view-box;
+    transform-origin: center;
+}
+
+.image-container {
+    position: relative;
+    text-align: center;
+}
+
+.bus-number {
+    position: absolute;
+    top: 100;
+    width: 100%;
 }
