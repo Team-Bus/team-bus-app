@@ -3,7 +3,7 @@ import { NavController } from '@ionic/angular';
 import { environment } from '../../environments/environment';
 import { DrawerState } from 'ion-bottom-drawer';
 import mapboxgl from 'mapbox-gl';
-import { BusapiService, Departure } from '../busapi.service';
+import { BusapiService, Departure, Stop } from '../busapi.service';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import StringSimilarity from 'string-similarity';
 
@@ -36,6 +36,8 @@ export class HomePage {
   matchingStops = [];
 
   arrivalBuses = [];
+
+  stopsForRoute = [];
 
 
   @ViewChild('map', { static: false }) map: ElementRef;
@@ -137,19 +139,9 @@ export class HomePage {
                 return t;
               }
             });
-            let closest = this.busService.getClosestBus(resp.coords);
-            this.selectedTitle = closest.RouteShortName;
-            this.selectedSubTitle = closest.Destination;
-            this.selectedPassengerCount = closest.OnBoard;
-            this.selectedStatus = closest.DisplayStatus;
-
-            if (closest.Deviation != 0) {
-              this.selectedStatus = closest.DisplayStatus + ': ' + closest.Deviation + ' min';
-            }
-
-            if (closest.Deviation < 0) {
-              this.selectedStatus = 'Early' + ': ' + -closest.Deviation + ' min';
-            }
+            this.busService.getClosestStop(resp.coords.latitude, resp.coords.longitude).then((stop) => {
+              this.goToStop(map, stop);
+            });
 
             let markerContainer = document.createElement('div');
             markerContainer.className = 'image-container';
@@ -250,10 +242,15 @@ export class HomePage {
 
     this.needInfo = true;
     this.arrivalBuses = [];
+    this.stopsForRoute = [];
     this.selectedTitle = bus.RouteShortName;
     this.selectedSubTitle = bus.Destination;
     this.selectedPassengerCount = bus.OnBoard;
     this.selectedStatus = bus.DisplayStatus;
+
+    this.busService.getStopsForBus(bus).then((stops: Stop[]) => {
+      this.stopsForRoute = stops;
+    });
 
     if (bus.Deviation != 0) {
       this.selectedStatus = bus.DisplayStatus + ': ' + bus.Deviation + ' min';
@@ -280,6 +277,7 @@ export class HomePage {
   goToStop(map, stop) {
 
     this.arrivalBuses = [];
+    this.stopsForRoute = [];
     this.needInfo = true;
     this.selectedTitle = stop.Name;
     this.selectedSubTitle = stop.Description;
@@ -288,7 +286,6 @@ export class HomePage {
 
     this.busService.getNextBusesForStop(stop.StopId).then((buses: Departure[]) => {
       this.arrivalBuses = buses;
-      console.log(this.arrivalBuses);
     });
 
 

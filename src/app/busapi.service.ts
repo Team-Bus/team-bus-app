@@ -64,15 +64,32 @@ export class BusapiService {
     });
   }
 
+  getStopsForBus(bus) {
+    return new Promise(resolve => {
+
+      let routeStops = [];
+
+      let stopsRequest = this.httpClient.get('http://team-bus-backend.herokuapp.com/api/route/' + bus.RouteId);
+      stopsRequest.subscribe(data => {
+        
+        let stops = data["Route"]["Stops"];
+
+        stops.forEach(stop => {
+          
+          let routeStop = new Stop(stop);
+          routeStops.push(routeStop);
+        });
+        resolve(routeStops);
+      })
+    })
+  }
+
   getNextBusesForStop(stopID) {
     return new Promise(resolve => {
       let departureRequest = this.httpClient.get('http://team-bus-backend.herokuapp.com/api/stop/departures/' + stopID);
       departureRequest.subscribe(data => {
         this.arrivalBuses = [];
         let departures = data['RouteDirections'][0]['Departures'];
-
-        console.log(departures);
-
 
         departures.forEach(depart => {
 
@@ -91,8 +108,8 @@ export class BusapiService {
           let etaDate = new Date(depart['ETALocalTime']);
           let staDate = new Date(depart['STALocalTime']);
 
-          let eta = (etaDate.getHours() < 12 ? etaDate.getHours() : etaDate.getHours() - 12) + ":" + ("0" + etaDate.getMinutes()).slice(-2) + (etaDate.getHours() <= 12 ? " AM" : " PM");
-          let sta = (staDate.getHours() < 12 ? staDate.getHours() : staDate.getHours() - 12) + ":" + ("0" + staDate.getMinutes()).slice(-2) + (staDate.getHours() <= 12 ? " AM" : " PM");
+          let eta = (etaDate.getHours() <= 12 ? etaDate.getHours() : etaDate.getHours() - 12) + ":" + ("0" + etaDate.getMinutes()).slice(-2) + (etaDate.getHours() < 12 ? " AM" : " PM");
+          let sta = (staDate.getHours() <= 12 ? staDate.getHours() : staDate.getHours() - 12) + ":" + ("0" + staDate.getMinutes()).slice(-2) + (staDate.getHours() < 12 ? " AM" : " PM");
 
           let departure = new Departure(matchingBus, eta, sta, depart['Dev']);
 
@@ -105,25 +122,13 @@ export class BusapiService {
     });
   }
 
-  getClosestBus(currentLocation) {
-    let curLat = currentLocation.latitude;
-    let curLong = currentLocation.longitude;
+  getClosestStop(lat: number, long: number) {
 
-    let closestBusIndex = 0;
-    let shortestDistance = 999999999999999999999999;
-    let index = 0;
-    this.sortedBuses.forEach(bus => {
-      let a = curLat - bus.Latitude;
-      let b = curLong - bus.Longitude;
-      let distance = Math.sqrt(a * a + b * b);
-
-      if (shortestDistance > distance) {
-        closestBusIndex = index;
-      }
-      index++;
+    return new Promise(resolve => {
+      resolve(this.sortedStops[0])
     });
-    return this.sortedBuses[closestBusIndex];
   }
+
 }
 
 export class Departure {
@@ -156,6 +161,7 @@ export class Bus {
   RouteShortName: string
   Deviation: string
   BlockFareboxId: number
+  RouteId: number
 
   constructor(values: Object = {}) {
     Object.assign(this, values);
