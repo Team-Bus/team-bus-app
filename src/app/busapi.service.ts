@@ -9,6 +9,8 @@ import { map } from 'rxjs/operators';
 export class BusapiService {
 
   sortedBuses = [];
+  sortedStops = [];
+  arrivalBuses = [];
 
   constructor(private httpClient: HttpClient) { }
 
@@ -20,8 +22,8 @@ export class BusapiService {
 
         let vehicles = data["Vehicles"];
 
-        for(let key in vehicles) {
-          if(vehicles.hasOwnProperty(key)) {
+        for (let key in vehicles) {
+          if (vehicles.hasOwnProperty(key)) {
 
             let bus = new Bus(vehicles[key]);
 
@@ -30,6 +32,76 @@ export class BusapiService {
         }
 
         resolve(this.sortedBuses);
+      });
+    });
+  }
+
+  getStops() {
+
+    return new Promise(resolve => {
+      let stops = this.httpClient.get("https://team-bus-backend.herokuapp.com/api/stop/");
+      stops.subscribe(data => {
+
+        let stops = data["Stops"];
+
+        for (let key in stops) {
+          if (stops.hasOwnProperty(key)) {
+
+            let stop = new Stop(stops[key]);
+
+            let a = 42.389439 - stop.Latitude;
+            let b = -72.528372 - stop.Longitude;
+            let distance = Math.sqrt(a * a + b * b);
+
+            if (distance < 0.12) {
+              this.sortedStops.push(stop);
+            }
+          }
+        }
+
+        resolve(this.sortedStops);
+      });
+    });
+  }
+
+  getNextBusesForStop(stopID) {
+    return new Promise(resolve => {
+      let departureRequest = this.httpClient.get('http://team-bus-backend.herokuapp.com/api/stop/departures/' + stopID);
+      departureRequest.subscribe(data => {
+
+        let departures = data['RouteDirections'][0]['Departures'];
+
+        console.log(departures);
+
+
+        departures.forEach(depart => {
+
+          let tripid = depart['Trip']['TripId'];
+
+          let matchingBus = null;
+
+          this.sortedBuses.forEach(bus => {
+
+            if (bus.TripId == tripid) {
+
+              matchingBus = bus;
+            }
+          });
+
+          let etaDate = new Date(depart['ETALocalTime']);
+          let staDate = new Date(depart['STALocalTime']);
+
+          let eta = (etaDate.getHours() <= 12 ? etaDate.getHours : etaDate.getHours() - 12) + ":" + etaDate.getMinutes() + (etaDate.getHours() <= 12 ? " AM" : " PM");
+          let sta = (staDate.getHours() <= 12 ? staDate.getHours : staDate.getHours() - 12) + ":" + staDate.getMinutes() + (staDate.getHours() <= 12 ? " AM" : " PM");
+
+
+          let departure = new Departure(matchingBus, eta, sta, depart['Dev']);
+
+          if(departure.Bus != null) {
+            this.arrivalBuses.push(departure);
+          }
+        });
+        resolve(this.arrivalBuses);
       });
     });
   }
@@ -44,9 +116,9 @@ export class BusapiService {
     this.sortedBuses.forEach(bus => {
       let a = curLat - bus.Latitude;
       let b = curLong - bus.Longitude;
-      let distance = Math.sqrt(a*a + b*b);
-      
-      if(shortestDistance > distance) {
+      let distance = Math.sqrt(a * a + b * b);
+
+      if (shortestDistance > distance) {
         closestBusIndex = index;
       }
       index++;
@@ -54,6 +126,23 @@ export class BusapiService {
     return this.sortedBuses[closestBusIndex];
   }
 }
+
+export class Departure {
+  Bus: Bus
+  ETA: string
+  STA: string
+  Dev: string
+
+  constructor(bus: Bus, eta: string, sta: string, dev: string) {
+    this.Bus = bus;
+    this.ETA = eta;
+    this.STA = sta;
+    this.Dev = dev;
+  }
+
+
+}
+
 
 export class Bus {
   VehicleId: number
@@ -66,6 +155,22 @@ export class Bus {
   DisplayStatus: string
   Color: string
   RouteShortName: string
+  Deviation: string
+  TripId: number
+
+  constructor(values: Object = {}) {
+    Object.assign(this, values);
+  }
+}
+
+export class Stop {
+  StopId: number
+  StopRecordID: number
+  Name: string
+  Description: string
+  Latitude: number
+  Longitude: number
+  IsTimePoint: boolean
 
   constructor(values: Object = {}) {
     Object.assign(this, values);

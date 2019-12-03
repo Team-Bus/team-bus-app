@@ -2,23 +2,65 @@
 </ion-header>
 
 <ion-content no-bounce>
-  <ion-searchbar #searchBar class="searchBar"></ion-searchbar>
+  <ion-searchbar #searchBar (ionCancel)="cancelSearch()" (ionFocus)="openSearch($event)" (ionInput)="runSearch($event)"
+    (ionClear)="clearSearch()" placeholder="Search" class="searchBar"></ion-searchbar>
   <div #map class="map"></div>
   <ion-bottom-drawer [disableDrag]="disableDrag" [(state)]="drawerState" [minimumHeight]="minimumHeight"
     [dockedHeight]="dockedHeight" [shouldBounce]="shouldBounce" [distanceTop]="distanceTop">
     <div class="drawer-content">
-      <ion-card>
+      <ion-card *ngIf="needInfo">
         <ion-card-header>
-          <ion-card-title>{{selectedTitle}}</ion-card-title>
+          <ion-card-title>{{selectedTitle}}
+            <ion-chip *ngIf="selectedStatus != null">
+              <ion-icon name="time" color="dark"></ion-icon>
+              <ion-label>{{selectedStatus}}</ion-label>
+            </ion-chip>
+            <ion-chip *ngIf="selectedStatus != null">
+              <ion-icon name="contacts" color="dark"></ion-icon>
+              <ion-label>{{selectedPassengerCount}}</ion-label>
+            </ion-chip>
+          </ion-card-title>
           <ion-card-subtitle>{{selectedSubTitle}}</ion-card-subtitle>
-          <ion-chip class='passengerChip'>
-            <ion-icon name="contacts" color="dark"></ion-icon>
-            <ion-label>{{selectedPassengerCount}}</ion-label>
-          </ion-chip>
+          <ion-list *ngIf="arrivalBuses.length > 0">
+            <div>
+              <ion-card *ngFor="let depart of arrivalBuses">
+                <ion-card-header>
+                  <ion-card-title>{{depart.Bus.RouteShortName}}
+                  </ion-card-title>
+                  <ion-card-subtitle>{{depart.Bus.Destination}}</ion-card-subtitle>
+                  <ion-card-subtitle>Scheduled Arrival: {{depart.STA}} <ion-chip outline='true' color="danger">
+                      <ion-label>+{{depart.Dev}}</ion-label>
+                    </ion-chip>
+                  </ion-card-subtitle>
+                  <ion-card-subtitle>Predicted Arrival: {{depart.ETA}}
+                  </ion-card-subtitle>
+                  <ion-button class="goButton" color="success" (click)="goToBus(mapRef, depart.Bus)">GO</ion-button>
+                </ion-card-header>
+              </ion-card>
+            </div>
+          </ion-list>
         </ion-card-header>
-        <ion-card-content>
-        </ion-card-content>
       </ion-card>
+      <ion-list *ngIf="!needInfo">
+        <div>
+          <ion-card *ngFor="let stop of matchingStops">
+            <ion-card-header>
+              <ion-card-title>{{stop.Name}}
+              </ion-card-title>
+              <ion-card-subtitle>{{stop.Description}}</ion-card-subtitle>
+              <ion-button class="goButton" color="success" (click)="goToStop(mapRef, stop)">GO</ion-button>
+            </ion-card-header>
+          </ion-card>
+          <ion-card *ngFor="let bus of matchingBuses">
+            <ion-card-header>
+              <ion-card-title>{{bus.RouteShortName}}
+              </ion-card-title>
+              <ion-card-subtitle>{{bus.Destination}}</ion-card-subtitle>
+              <ion-button class="goButton" color="success" (click)="goToBus(mapRef, bus)">GO</ion-button>
+            </ion-card-header>
+          </ion-card>
+        </div>
+      </ion-list>
     </div>
   </ion-bottom-drawer>
 </ion-content>
