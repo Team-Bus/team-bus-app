@@ -21,28 +21,26 @@ ion-content {
     overflow:auto;
 }
 
-#bus {
-    fill: black;
-}
-
 .goButton {
     position: absolute;
     top: 25%;
     right: 5px;
 }
 
-svg .rotate {
-    transform-box: view-box;
-    transform-origin: center;
+g {
+    transform-box: view-box !important;
+    transform-origin: center !important;
 }
 
-.image-container {
+.svg-container {
     position: relative;
     text-align: center;
 }
 
-.bus-number {
-    position: absolute;
-    top: 100;
-    width: 100%;
+#bus {
+    z-index: -100;
+}
+
+#busProps {
+    fill: black;
 }

@@ -143,8 +143,6 @@ export class Departure {
     this.STA = sta;
     this.Dev = dev;
   }
-
-
 }
 
 
