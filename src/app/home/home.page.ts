@@ -108,16 +108,20 @@ export class HomePage {
   }
 
   goToUserLocation() {
-    this.mapRef.flyTo({
-      center: [this.userLocation.longitude, this.userLocation.latitude],
-      offset: [0, -75],
-      zoom: 15,
-      speed: 2,
-      curve: 1,
-      easing(t) {
-        return t;
-      }
-    });
+
+    if (this.userLocation != null) {
+
+      this.mapRef.flyTo({
+        center: [this.userLocation.longitude, this.userLocation.latitude],
+        offset: [0, -75],
+        zoom: 15,
+        speed: 2,
+        curve: 1,
+        easing(t) {
+          return t;
+        }
+      });
+    }
   }
 
   ionViewDidEnter() {
@@ -213,16 +217,16 @@ export class HomePage {
             stopCircle.setAttributeNS(null, 'style', 'fill: red; stroke: white; stroke-width: 2px;');
 
             let text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                text.setAttributeNS(null, 'id', 'busNum');
-                text.setAttributeNS(null, 'x', '50%');
-                text.setAttributeNS(null, 'y', '51%');
-                text.setAttributeNS(null, 'dominant-baseline', 'middle');
-                text.setAttributeNS(null, 'text-anchor', 'middle');
-                text.setAttributeNS(null, 'fill', '#FFF');
-                text.setAttributeNS(null, 'font-size', '10');
-                text.setAttributeNS(null, 'font-weight', '700');
-                text.setAttributeNS(null, 'font-family', '"Source Sans Pro", sans-serif');
-                text.textContent = 'S';
+            text.setAttributeNS(null, 'id', 'busNum');
+            text.setAttributeNS(null, 'x', '50%');
+            text.setAttributeNS(null, 'y', '51%');
+            text.setAttributeNS(null, 'dominant-baseline', 'middle');
+            text.setAttributeNS(null, 'text-anchor', 'middle');
+            text.setAttributeNS(null, 'fill', '#FFF');
+            text.setAttributeNS(null, 'font-size', '10');
+            text.setAttributeNS(null, 'font-weight', '700');
+            text.setAttributeNS(null, 'font-family', '"Source Sans Pro", sans-serif');
+            text.textContent = 'S';
 
             markerSvg.appendChild(stopCircle);
             markerSvg.appendChild(text);
@@ -245,35 +249,35 @@ export class HomePage {
             markerContainer.id = 'svgPlace';
 
             let markerSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-                markerSvg.setAttributeNS(null, 'id', 'bus');
-                markerSvg.setAttributeNS(null, 'viewBox', '0 0 512 512');
-                markerSvg.setAttributeNS(null, 'height', '37.5px');
-                markerSvg.setAttributeNS(null, 'width', '75px');
-                markerSvg.setAttributeNS(null, 'style', 'z-index: -100;');
-            
+            markerSvg.setAttributeNS(null, 'id', 'bus');
+            markerSvg.setAttributeNS(null, 'viewBox', '0 0 512 512');
+            markerSvg.setAttributeNS(null, 'height', '37.5px');
+            markerSvg.setAttributeNS(null, 'width', '75px');
+            markerSvg.setAttributeNS(null, 'style', 'z-index: -100;');
+
             let busHolder = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-                busHolder.setAttributeNS(null, 'id', 'busHolder');
+            busHolder.setAttributeNS(null, 'id', 'busHolder');
 
             let busPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                busPath.setAttributeNS(null, 'id', 'busProps');
-                busPath.setAttributeNS(null, 'd', 'm480,358.85599l0,-205.71298c0,-22.63101 -18.32599,-41.14301 -40.728,-41.14301l-366.54401,0c-22.402,0 -40.728,18.51199 -40.728,41.14301l0,205.71298c0,22.63202 18.326,41.14401 40.728,41.14401l366.54501,0c22.401,0 40.72699,-18.51199 40.72699,-41.14401zm-368,5.14401l0,-216l288,0l0,216l-288,0z');
-                busPath.setAttributeNS(null, 'fill', '#' + bus.Color);
+            busPath.setAttributeNS(null, 'id', 'busProps');
+            busPath.setAttributeNS(null, 'd', 'm480,358.85599l0,-205.71298c0,-22.63101 -18.32599,-41.14301 -40.728,-41.14301l-366.54401,0c-22.402,0 -40.728,18.51199 -40.728,41.14301l0,205.71298c0,22.63202 18.326,41.14401 40.728,41.14401l366.54501,0c22.401,0 40.72699,-18.51199 40.72699,-41.14401zm-368,5.14401l0,-216l288,0l0,216l-288,0z');
+            busPath.setAttributeNS(null, 'fill', '#' + bus.Color);
 
             let busLight1 = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
-                busLight1.setAttributeNS(null, 'id', 'light1');
-                busLight1.setAttributeNS(null, 'ry', '24.5');
-                busLight1.setAttributeNS(null, 'rx', '19.5');
-                busLight1.setAttributeNS(null, 'cy', '189.5');
-                busLight1.setAttributeNS(null, 'cx', '58.5');
-                busLight1.setAttributeNS(null, 'fill', '#fff');
-            
+            busLight1.setAttributeNS(null, 'id', 'light1');
+            busLight1.setAttributeNS(null, 'ry', '24.5');
+            busLight1.setAttributeNS(null, 'rx', '19.5');
+            busLight1.setAttributeNS(null, 'cy', '189.5');
+            busLight1.setAttributeNS(null, 'cx', '58.5');
+            busLight1.setAttributeNS(null, 'fill', '#fff');
+
             let busLight2 = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
-                busLight2.setAttributeNS(null, 'id', 'light2');
-                busLight2.setAttributeNS(null, 'ry', '24.5');
-                busLight2.setAttributeNS(null, 'rx', '19.5');
-                busLight2.setAttributeNS(null, 'cy', '306.5');
-                busLight2.setAttributeNS(null, 'cx', '60.5');
-                busLight2.setAttributeNS(null, 'fill', '#fff');
+            busLight2.setAttributeNS(null, 'id', 'light2');
+            busLight2.setAttributeNS(null, 'ry', '24.5');
+            busLight2.setAttributeNS(null, 'rx', '19.5');
+            busLight2.setAttributeNS(null, 'cy', '306.5');
+            busLight2.setAttributeNS(null, 'cx', '60.5');
+            busLight2.setAttributeNS(null, 'fill', '#fff');
 
             busHolder.appendChild(busPath);
             busHolder.appendChild(busLight1);
@@ -283,16 +287,16 @@ export class HomePage {
             busHolder.setAttributeNS(null, 'style', 'transform-box: view-box; transform-origin: center;');
 
             let text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                text.setAttributeNS(null, 'id', 'busNum');
-                text.setAttributeNS(null, 'x', '50%');
-                text.setAttributeNS(null, 'y', '51%');
-                text.setAttributeNS(null, 'dominant-baseline', 'middle');
-                text.setAttributeNS(null, 'text-anchor', 'middle');
-                text.setAttributeNS(null, 'fill', '#' + bus.Color);
-                text.setAttributeNS(null, 'font-size', '150');
-                text.setAttributeNS(null, 'font-weight', '700');
-                text.setAttributeNS(null, 'font-family', '"Source Sans Pro", sans-serif');
-                text.textContent = bus.RouteShortName;
+            text.setAttributeNS(null, 'id', 'busNum');
+            text.setAttributeNS(null, 'x', '50%');
+            text.setAttributeNS(null, 'y', '51%');
+            text.setAttributeNS(null, 'dominant-baseline', 'middle');
+            text.setAttributeNS(null, 'text-anchor', 'middle');
+            text.setAttributeNS(null, 'fill', '#' + bus.Color);
+            text.setAttributeNS(null, 'font-size', '150');
+            text.setAttributeNS(null, 'font-weight', '700');
+            text.setAttributeNS(null, 'font-family', '"Source Sans Pro", sans-serif');
+            text.textContent = bus.RouteShortName;
 
             markerSvg.appendChild(busHolder);
             markerSvg.appendChild(text);

@@ -125,7 +125,12 @@ export class BusapiService {
   getClosestStop(lat: number, long: number) {
 
     return new Promise(resolve => {
-      resolve(this.sortedStops[0])
+
+      let stopRequest = this.httpClient.get('https://team-bus-backend.herokuapp.com/api/stop/nearest?lat=' + lat + '&long=' + long);
+      stopRequest.subscribe(data => {
+        let closestStop = new Stop(data);
+        resolve(closestStop);
+      });
     });
   }
 
