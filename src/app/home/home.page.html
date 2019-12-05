@@ -4,6 +4,16 @@
 <ion-content no-bounce>
   <ion-searchbar #searchBar (ionCancel)="cancelSearch()" (ionFocus)="openSearch($event)" (ionInput)="runSearch($event)"
     (ionClear)="clearSearch()" placeholder="Search" class="searchBar"></ion-searchbar>
+    <ion-fab id='settingsFab' slot="fixed">
+      <ion-fab-button size="small">
+        <ion-icon name="settings"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+    <ion-fab id='locateFab' (click)="goToUserLocation()" slot="fixed">
+      <ion-fab-button size="small">
+        <ion-icon name="locate"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
   <div #map class="map"></div>
   <ion-bottom-drawer [disableDrag]="disableDrag" [(state)]="drawerState" [minimumHeight]="minimumHeight"
     [dockedHeight]="dockedHeight" [shouldBounce]="shouldBounce" [distanceTop]="distanceTop">

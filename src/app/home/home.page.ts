@@ -39,6 +39,8 @@ export class HomePage {
 
   stopsForRoute = [];
 
+  userLocation = null;
+
 
   @ViewChild('map', { static: false }) map: ElementRef;
 
@@ -105,6 +107,19 @@ export class HomePage {
     });
   }
 
+  goToUserLocation() {
+    this.mapRef.flyTo({
+      center: [this.userLocation.longitude, this.userLocation.latitude],
+      offset: [0, -75],
+      zoom: 15,
+      speed: 2,
+      curve: 1,
+      easing(t) {
+        return t;
+      }
+    });
+  }
+
   ionViewDidEnter() {
 
     this.busService.getBuses().then((buses) => {
@@ -134,6 +149,9 @@ export class HomePage {
               enableHighAccuracy: true
             }
           ).then((resp) => {
+
+            this.userLocation = resp.coords;
+
             map.flyTo({
               center: [resp.coords.longitude, resp.coords.latitude],
               offset: [0, -75],
