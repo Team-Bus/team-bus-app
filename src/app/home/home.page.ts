@@ -47,16 +47,21 @@ export class HomePage {
   runSearch(ev: any) {
     let searchValue = ev.target.value;
     if (searchValue.length > 1) {
+      this.needInfo = false;
+      this.drawerState = DrawerState.Top;
       this.searchBusesForTerm(searchValue);
       this.searchStopsForTerm(searchValue);
+    } else {
+      this.needInfo = true;
+      this.drawerState = DrawerState.Bottom;
     }
   }
 
   openSearch(ev: any) {
-    this.needInfo = false;
-    this.drawerState = DrawerState.Top;
     let searchValue = ev.target.value;
     if (searchValue.length > 1) {
+      this.needInfo = false;
+      this.drawerState = DrawerState.Top;
       this.searchBusesForTerm(searchValue);
       this.searchStopsForTerm(searchValue);
     }
