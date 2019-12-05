@@ -206,14 +206,26 @@ export class HomePage {
             markerSvg.setAttributeNS(null, 'width', '100px');
             markerSvg.setAttributeNS(null, 'style', 'z-index: -100;');
 
-            let locationCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-            locationCircle.setAttributeNS(null, 'cx', '50px');
-            locationCircle.setAttributeNS(null, 'cy', '50px');
-            locationCircle.setAttributeNS(null, 'r', '7px');
-            locationCircle.setAttributeNS(null, 'style', 'fill: red ; stroke: white; stroke-width: 2.5px;');
+            let stopCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            stopCircle.setAttributeNS(null, 'cx', '50px');
+            stopCircle.setAttributeNS(null, 'cy', '50px');
+            stopCircle.setAttributeNS(null, 'r', '7px');
+            stopCircle.setAttributeNS(null, 'style', 'fill: red; stroke: white; stroke-width: 2px;');
 
+            let text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttributeNS(null, 'id', 'busNum');
+                text.setAttributeNS(null, 'x', '50%');
+                text.setAttributeNS(null, 'y', '51%');
+                text.setAttributeNS(null, 'dominant-baseline', 'middle');
+                text.setAttributeNS(null, 'text-anchor', 'middle');
+                text.setAttributeNS(null, 'fill', '#FFF');
+                text.setAttributeNS(null, 'font-size', '10');
+                text.setAttributeNS(null, 'font-weight', '700');
+                text.setAttributeNS(null, 'font-family', '"Source Sans Pro", sans-serif');
+                text.textContent = 'S';
 
-            markerSvg.appendChild(locationCircle);
+            markerSvg.appendChild(stopCircle);
+            markerSvg.appendChild(text);
             markerContainer.appendChild(markerSvg);
 
             let marker = new mapboxgl.Marker(markerContainer, { offset: [0, 0], cluster: true })
@@ -273,7 +285,7 @@ export class HomePage {
             let text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
                 text.setAttributeNS(null, 'id', 'busNum');
                 text.setAttributeNS(null, 'x', '50%');
-                text.setAttributeNS(null, 'y', '50%');
+                text.setAttributeNS(null, 'y', '51%');
                 text.setAttributeNS(null, 'dominant-baseline', 'middle');
                 text.setAttributeNS(null, 'text-anchor', 'middle');
                 text.setAttributeNS(null, 'fill', '#' + bus.Color);
