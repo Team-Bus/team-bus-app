@@ -69,6 +69,10 @@ export class HomePage {
     }
   }
 
+  fixMap() {
+    this.mapRef.resize();
+  }
+
   clearSearch() {
     this.matchingBuses = [];
     this.matchingStops = [];
@@ -86,11 +90,15 @@ export class HomePage {
   searchBusesForTerm(term) {
     this.matchingBuses = [];
     this.busService.sortedBuses.forEach(bus => {
-      let nameSim = stringSimilarity.compareTwoStrings(term, bus.RouteShortName);
-      let destSim = stringSimilarity.compareTwoStrings(term, bus.Destination);
+      try {
+        let nameSim = stringSimilarity.compareTwoStrings(term, bus.RouteShortName);
+        let destSim = stringSimilarity.compareTwoStrings(term, bus.Destination);
 
-      if (nameSim > 0.1 || destSim > 0.1) {
-        this.matchingBuses.push(bus);
+        if (nameSim > 0.1 || destSim > 0.1) {
+          this.matchingBuses.push(bus);
+        }
+      } catch {
+
       }
     });
   }
@@ -142,6 +150,7 @@ export class HomePage {
 
         map.on('drag', () => {
           this.drawerState = DrawerState.Bottom;
+          this.mapRef.resize();
         });
 
 
@@ -284,7 +293,7 @@ export class HomePage {
             busHolder.appendChild(busLight2);
 
             busHolder.setAttributeNS(null, 'transform', 'rotate(' + (bus.Heading + 90) + ')');
-            busHolder.setAttributeNS(null, 'style', 'transform-box: view-box; transform-origin: center;');
+            busHolder.setAttributeNS(null, 'style', 'transform-origin: center; transform-origin: center;');
 
             let text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
             text.setAttributeNS(null, 'id', 'busNum');
@@ -349,6 +358,7 @@ export class HomePage {
       }
     });
     this.drawerState = DrawerState.Docked;
+    this.mapRef.resize();
   }
 
   goToStop(map, stop) {
@@ -377,5 +387,6 @@ export class HomePage {
       }
     });
     this.drawerState = DrawerState.Docked;
+    this.mapRef.resize();
   }
 }

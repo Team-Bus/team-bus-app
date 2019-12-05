@@ -2,7 +2,7 @@
 </ion-header>
 
 <ion-content no-bounce>
-  <ion-searchbar #searchBar (ionCancel)="cancelSearch()" (ionFocus)="openSearch($event)" (ionInput)="runSearch($event)"
+  <ion-searchbar #searchBar (ionCancel)="cancelSearch()" (ionBlur)="fixMap()" (ionFocus)="openSearch($event)" (ionInput)="runSearch($event)"
     (ionClear)="clearSearch()" placeholder="Search" class="searchBar"></ion-searchbar>
     <ion-fab id='settingsFab' slot="fixed">
       <ion-fab-button size="small">
