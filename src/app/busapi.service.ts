@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -69,7 +67,7 @@ export class BusapiService {
 
       let routeStops = [];
 
-      let stopsRequest = this.httpClient.get('http://team-bus-backend.herokuapp.com/api/route/' + bus.RouteId);
+      let stopsRequest = this.httpClient.get('https://team-bus-backend.herokuapp.com/api/route/' + bus.RouteId);
       stopsRequest.subscribe(data => {
         
         let stops = data["Route"]["Stops"];
@@ -86,7 +84,7 @@ export class BusapiService {
 
   getNextBusesForStop(stopID) {
     return new Promise(resolve => {
-      let departureRequest = this.httpClient.get('http://team-bus-backend.herokuapp.com/api/stop/departures/' + stopID);
+      let departureRequest = this.httpClient.get('https://team-bus-backend.herokuapp.com/api/stop/departures/' + stopID);
       departureRequest.subscribe(data => {
         this.arrivalBuses = [];
         let departures = data['RouteDirections'][0]['Departures'];

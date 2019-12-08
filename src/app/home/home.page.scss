@@ -2,6 +2,27 @@ ion-content {
     contain: size style;
 }
 
+#myScrollDiv {
+    height: 80%;
+}
+  
+div[scrollx=true], div[scrolly=true] {
+position: relative;
+overflow: hidden;
+
+::-webkit-scrollbar {
+    display: none;
+}
+}
+  
+div[scrollx=true] {
+    overflow-x: auto;
+}
+
+div[scrolly=true] {
+    overflow-y: auto;
+}
+
 #settingsFab {
     top: 65px;
     right: 0px;

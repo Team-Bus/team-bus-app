@@ -22,7 +22,7 @@ export class HomePage {
   distanceTop = 60;
   drawerState = DrawerState.Bottom;
   states = DrawerState;
-  minimumHeight = 140;
+  minimumHeight = 150;
 
   selectedTitle = 'Default Title'
   selectedSubTitle = 'Default Subtitle'
@@ -40,6 +40,13 @@ export class HomePage {
   stopsForRoute = [];
 
   userLocation = null;
+
+  enableDashScroll() {
+    this.disableDrag = false;
+  }
+  disableDashScroll() {
+    this.disableDrag = true;
+  }
 
 
   @ViewChild('map', { static: false }) map: ElementRef;
