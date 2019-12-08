@@ -69,11 +69,11 @@ export class BusapiService {
 
       let stopsRequest = this.httpClient.get('https://team-bus-backend.herokuapp.com/api/route/' + bus.RouteId);
       stopsRequest.subscribe(data => {
-        
+
         let stops = data["Route"]["Stops"];
 
         stops.forEach(stop => {
-          
+
           let routeStop = new Stop(stop);
           routeStops.push(routeStop);
         });
@@ -87,34 +87,43 @@ export class BusapiService {
       let departureRequest = this.httpClient.get('https://team-bus-backend.herokuapp.com/api/stop/departures/' + stopID);
       departureRequest.subscribe(data => {
         this.arrivalBuses = [];
-        let departures = data['RouteDirections'][0]['Departures'];
 
-        departures.forEach(depart => {
+        let directions = data['RouteDirections'];
 
-          let tripid = depart['Trip']['BlockFareboxId'];
+        directions.forEach(direction => {
 
-          let matchingBus = null;
+          let departures = direction['Departures'];
 
-          this.sortedBuses.forEach(bus => {
+          departures.forEach(depart => {
 
-            if (bus.BlockFareboxId == tripid) {
+            let tripid = depart['Trip']['BlockFareboxId'];
 
-              matchingBus = bus;
+            let matchingBus = null;
+
+            this.sortedBuses.forEach(bus => {
+
+              if (bus.BlockFareboxId == tripid) {
+
+                matchingBus = bus;
+              }
+            });
+
+            let etaDate = new Date(depart['ETALocalTime']);
+            let staDate = new Date(depart['STALocalTime']);
+
+            let eta = (etaDate.getHours() <= 12 ? etaDate.getHours() : etaDate.getHours() - 12) + ":" + ("0" + etaDate.getMinutes()).slice(-2) + (etaDate.getHours() < 12 ? " AM" : " PM");
+            let sta = (staDate.getHours() <= 12 ? staDate.getHours() : staDate.getHours() - 12) + ":" + ("0" + staDate.getMinutes()).slice(-2) + (staDate.getHours() < 12 ? " AM" : " PM");
+
+            let departure = new Departure(matchingBus, eta, sta, depart['Dev'], staDate);
+
+            if (departure.Bus != null) {
+              this.arrivalBuses.push(departure);
             }
           });
-
-          let etaDate = new Date(depart['ETALocalTime']);
-          let staDate = new Date(depart['STALocalTime']);
-
-          let eta = (etaDate.getHours() <= 12 ? etaDate.getHours() : etaDate.getHours() - 12) + ":" + ("0" + etaDate.getMinutes()).slice(-2) + (etaDate.getHours() < 12 ? " AM" : " PM");
-          let sta = (staDate.getHours() <= 12 ? staDate.getHours() : staDate.getHours() - 12) + ":" + ("0" + staDate.getMinutes()).slice(-2) + (staDate.getHours() < 12 ? " AM" : " PM");
-
-          let departure = new Departure(matchingBus, eta, sta, depart['Dev']);
-
-          if(departure.Bus != null) {
-            this.arrivalBuses.push(departure);
-          }
         });
+
+        this.arrivalBuses.sort((a, b) => a.OriginalSTA - b.OriginalSTA);
+
         resolve(this.arrivalBuses);
       });
     });
@@ -139,12 +148,14 @@ export class Departure {
   ETA: string
   STA: string
   Dev: string
+  OriginalSTA: Date
 
-  constructor(bus: Bus, eta: string, sta: string, dev: string) {
+  constructor(bus: Bus, eta: string, sta: string, dev: string, orgSTA: Date) {
     this.Bus = bus;
     this.ETA = eta;
     this.STA = sta;
     this.Dev = dev;
+    this.OriginalSTA = orgSTA;
   }
 }
 

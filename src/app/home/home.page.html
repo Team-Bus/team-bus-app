@@ -14,10 +14,10 @@
       <ion-icon name="locate"></ion-icon>
     </ion-fab-button>
   </ion-fab>
-  <ion-fab id='heatFab' slot="fixed">
+  <ion-fab id='heatFab' (click)="toggleMarkers()" slot="fixed">
     <ion-fab-button size="small">
       <!-- color-palette -->
-      <ion-icon name="flame"></ion-icon>
+      <ion-icon name="thermometer"></ion-icon>
     </ion-fab-button>
   </ion-fab>
   <div #map class="map"></div>
@@ -34,10 +34,18 @@
                   <ion-icon name="time" color="dark"></ion-icon>
                   <ion-label>{{selectedStatus}}</ion-label>
                 </ion-chip>
-                <ion-chip style="pointer-events:none;" *ngIf="selectedStatus != null">
+                <ion-chip color='success' style="pointer-events:none;" *ngIf="selectedStatus != null && selectedPassengerCount <= 33.3">
                   <ion-icon name="contacts" color="dark"></ion-icon>
-                  <ion-label>{{selectedPassengerCount}}</ion-label>
+                  <ion-label>{{selectedPassengerCount}}%</ion-label>
                 </ion-chip>
+                <ion-chip color='warning' style="pointer-events:none;" *ngIf="selectedStatus != null && (selectedPassengerCount > 33.3 && selectedPassengerCount <= 66.6)">
+                    <ion-icon name="contacts" color="dark"></ion-icon>
+                    <ion-label>{{selectedPassengerCount}}%</ion-label>
+                  </ion-chip>
+                  <ion-chip color='danger' style="pointer-events:none;" *ngIf="selectedStatus != null && selectedPassengerCount > 66.6">
+                      <ion-icon name="contacts" color="dark"></ion-icon>
+                      <ion-label>{{selectedPassengerCount}}%</ion-label>
+                    </ion-chip>
               </ion-card-title>
               <ion-card-subtitle>{{selectedSubTitle}}</ion-card-subtitle>
             </ion-card-header>

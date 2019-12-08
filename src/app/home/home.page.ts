@@ -41,6 +41,10 @@ export class HomePage {
 
   userLocation = null;
 
+  colorBusMarkers = [];
+  heatMapBuses = [];
+
+
   enableDashScroll() {
     this.disableDrag = false;
   }
@@ -119,6 +123,12 @@ export class HomePage {
       if (nameSim > 0.2 || destSim > 0.2) {
         this.matchingStops.push(stop);
       }
+    });
+  }
+
+  toggleMarkers() {
+    this.colorBusMarkers.forEach(marker => {
+      marker.remove();
     });
   }
 
@@ -248,7 +258,7 @@ export class HomePage {
             markerSvg.appendChild(text);
             markerContainer.appendChild(markerSvg);
 
-            let popup = new mapboxgl.Popup({ offset: 25 })
+            let popup = new mapboxgl.Popup({ offset: 10 })
               .setText(stop.Name);
 
             let marker = new mapboxgl.Marker(markerContainer, { offset: [0, 0], cluster: true })
@@ -324,13 +334,15 @@ export class HomePage {
             markerSvg.appendChild(text);
             markerContainer.appendChild(markerSvg);
 
-            let popup = new mapboxgl.Popup({ offset: 25 })
+            let popup = new mapboxgl.Popup({ offset: 10 })
               .setText(bus.RouteShortName);
 
             let marker = new mapboxgl.Marker(markerContainer, { offset: [0, 0] })
               .setLngLat([bus.Longitude, bus.Latitude])
               .setPopup(popup)
               .addTo(map);
+
+            this.colorBusMarkers.push(marker);
 
             marker.getElement().addEventListener('click', () => {
               this.goToBus(map, bus);
@@ -348,7 +360,7 @@ export class HomePage {
     this.stopsForRoute = [];
     this.selectedTitle = bus.RouteShortName;
     this.selectedSubTitle = bus.Destination;
-    this.selectedPassengerCount = bus.OnBoard;
+    this.selectedPassengerCount = Math.floor(bus.OnBoard/60 * 100);
     this.selectedStatus = bus.DisplayStatus;
 
     this.busService.getStopsForBus(bus).then((stops: Stop[]) => {
@@ -379,6 +391,9 @@ export class HomePage {
   }
 
   goToStop(map, stop) {
+
+    console.log(stop);
+  
 
     this.arrivalBuses = [];
     this.stopsForRoute = [];
