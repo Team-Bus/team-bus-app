@@ -23,20 +23,26 @@ div[scrolly=true] {
     overflow-y: auto;
 }
 
-#settingsFab {
+#locateFab {
     top: 65px;
     right: 0px;
     z-index: 1;
 }
 
-#locateFab {
+#heatFab {
     top: 110px;
     right: 0px;
     z-index: 1;
 }
 
-#heatFab {
+#forceReload {
     top: 155px;
+    right: 0px;
+    z-index: 1;
+}
+
+#settingsFab {
+    top: 200px;
     right: 0px;
     z-index: 1;
 }

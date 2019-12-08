@@ -4,27 +4,37 @@
 <ion-content no-bounce overflow-scroll="true">
   <ion-searchbar #searchBar (ionCancel)="cancelSearch()" (ionBlur)="fixMap()" (ionFocus)="openSearch($event)"
     (ionInput)="runSearch($event)" (ionClear)="clearSearch()" placeholder="Search" class="searchBar"></ion-searchbar>
-  <ion-fab id='settingsFab' slot="fixed">
-    <ion-fab-button size="small">
-      <ion-icon name="settings"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
   <ion-fab id='locateFab' (click)="goToUserLocation()" slot="fixed">
     <ion-fab-button size="small">
       <ion-icon name="locate"></ion-icon>
     </ion-fab-button>
   </ion-fab>
-  <ion-fab id='heatFab' (click)="toggleMarkers()" slot="fixed">
+  <ion-fab id='heatFab' *ngIf="showNormal" (click)="toggleMarkers()" slot="fixed">
     <ion-fab-button size="small">
-      <!-- color-palette -->
-      <ion-icon name="thermometer"></ion-icon>
+      <ion-icon name="color-fill"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+  <ion-fab id='heatFab' *ngIf="!showNormal" (click)="toggleMarkers()" slot="fixed">
+    <ion-fab-button color='danger' size="small">
+      <ion-icon name="pint"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+  <ion-fab id='forceReload' slot="fixed">
+    <ion-fab-button size="small">
+      <ion-icon name="refresh"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+  <ion-fab id='settingsFab' slot="fixed">
+    <ion-fab-button size="small">
+      <ion-icon name="information-circle-outline"></ion-icon>
     </ion-fab-button>
   </ion-fab>
   <div #map class="map"></div>
   <ion-bottom-drawer [disableDrag]="disableDrag" [(state)]="drawerState" [minimumHeight]="minimumHeight"
     [dockedHeight]="dockedHeight" [shouldBounce]="shouldBounce" [distanceTop]="distanceTop">
     <div class="drawer-content">
-      <div style='background:white; width:100%; height:50px;' class='drawerActuator' (touchstart)='enableDashScroll()' (touchend)='disableDashScroll()'> </div>
+      <div style='background:white; width:100%; height:50px;' class='drawerActuator' (touchstart)='enableDashScroll()'
+        (touchend)='disableDashScroll()'> </div>
       <div scrollY="true" id="myScrollDiv">
         <div *ngIf="needInfo">
           <ion-card>
@@ -34,18 +44,21 @@
                   <ion-icon name="time" color="dark"></ion-icon>
                   <ion-label>{{selectedStatus}}</ion-label>
                 </ion-chip>
-                <ion-chip color='success' style="pointer-events:none;" *ngIf="selectedStatus != null && selectedPassengerCount <= 33.3">
+                <ion-chip color='success' style="pointer-events:none;"
+                  *ngIf="selectedStatus != null && selectedPassengerCount <= 33.3">
                   <ion-icon name="contacts" color="dark"></ion-icon>
                   <ion-label>{{selectedPassengerCount}}%</ion-label>
                 </ion-chip>
-                <ion-chip color='warning' style="pointer-events:none;" *ngIf="selectedStatus != null && (selectedPassengerCount > 33.3 && selectedPassengerCount <= 66.6)">
-                    <ion-icon name="contacts" color="dark"></ion-icon>
-                    <ion-label>{{selectedPassengerCount}}%</ion-label>
-                  </ion-chip>
-                  <ion-chip color='danger' style="pointer-events:none;" *ngIf="selectedStatus != null && selectedPassengerCount > 66.6">
-                      <ion-icon name="contacts" color="dark"></ion-icon>
-                      <ion-label>{{selectedPassengerCount}}%</ion-label>
-                    </ion-chip>
+                <ion-chip color='warning' style="pointer-events:none;"
+                  *ngIf="selectedStatus != null && (selectedPassengerCount > 33.3 && selectedPassengerCount <= 66.6)">
+                  <ion-icon name="contacts" color="dark"></ion-icon>
+                  <ion-label>{{selectedPassengerCount}}%</ion-label>
+                </ion-chip>
+                <ion-chip color='danger' style="pointer-events:none;"
+                  *ngIf="selectedStatus != null && selectedPassengerCount > 66.6">
+                  <ion-icon name="contacts" color="dark"></ion-icon>
+                  <ion-label>{{selectedPassengerCount}}%</ion-label>
+                </ion-chip>
               </ion-card-title>
               <ion-card-subtitle>{{selectedSubTitle}}</ion-card-subtitle>
             </ion-card-header>

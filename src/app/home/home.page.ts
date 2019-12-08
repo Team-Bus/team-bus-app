@@ -30,6 +30,8 @@ export class HomePage {
   selectedStatus = 'Late';
   needInfo = true;
 
+  showNormal = true;
+
   mapRef = null;
 
   matchingBuses = [];
@@ -42,8 +44,9 @@ export class HomePage {
   userLocation = null;
 
   colorBusMarkers = [];
-  heatMapBuses = [];
+  heatBusMarkers = [];
 
+  gradient = ["#2bd500","#55aa00","#7f8000","#aa5500","#d52b00"];
 
   enableDashScroll() {
     this.disableDrag = false;
@@ -127,9 +130,23 @@ export class HomePage {
   }
 
   toggleMarkers() {
-    this.colorBusMarkers.forEach(marker => {
-      marker.remove();
-    });
+    this.showNormal = !this.showNormal;
+
+    if (!this.showNormal) {
+      this.colorBusMarkers.forEach(marker => {
+        marker.remove();
+      });
+      this.heatBusMarkers.forEach(marker => {
+        marker.addTo(this.mapRef);
+      });
+    } else {
+      this.colorBusMarkers.forEach(marker => {
+        marker.addTo(this.mapRef);
+      });
+      this.heatBusMarkers.forEach(marker => {
+        marker.remove();
+      });
+    }
   }
 
   goToUserLocation() {
@@ -347,6 +364,87 @@ export class HomePage {
             marker.getElement().addEventListener('click', () => {
               this.goToBus(map, bus);
             });
+
+
+            // Heat Map Bus
+
+            let gradientColor = this.gradient[Math.floor((bus.OnBoard / 60) * 5)];
+            console.log(Math.floor((bus.OnBoard / 60) * 5));
+
+
+            let markerContainer2 = document.createElement('div');
+            markerContainer2.className = 'svg-container';
+            markerContainer2.id = 'svgPlace';
+
+            let markerSvg2 = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            markerSvg2.setAttributeNS(null, 'id', 'bus');
+            markerSvg2.setAttributeNS(null, 'viewBox', '0 0 512 512');
+            markerSvg2.setAttributeNS(null, 'height', '37.5px');
+            markerSvg2.setAttributeNS(null, 'width', '75px');
+            markerSvg2.setAttributeNS(null, 'style', 'z-index: -100;');
+
+            let busHolder2 = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            busHolder2.setAttributeNS(null, 'id', 'busHolder');
+            busHolder2.style.webkitTransformStyle = 'fill-box';
+            busHolder2.style.webkitTransformOrigin = 'center';
+
+            let busPath2 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            busPath2.setAttributeNS(null, 'id', 'busProps');
+            busPath2.setAttributeNS(null, 'd', 'm480,358.85599l0,-205.71298c0,-22.63101 -18.32599,-41.14301 -40.728,-41.14301l-366.54401,0c-22.402,0 -40.728,18.51199 -40.728,41.14301l0,205.71298c0,22.63202 18.326,41.14401 40.728,41.14401l366.54501,0c22.401,0 40.72699,-18.51199 40.72699,-41.14401zm-368,5.14401l0,-216l288,0l0,216l-288,0z');
+            busPath2.setAttributeNS(null, 'fill', gradientColor); // Change
+
+            let busLight12 = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+            busLight12.setAttributeNS(null, 'id', 'light1');
+            busLight12.setAttributeNS(null, 'ry', '24.5');
+            busLight12.setAttributeNS(null, 'rx', '19.5');
+            busLight12.setAttributeNS(null, 'cy', '189.5');
+            busLight12.setAttributeNS(null, 'cx', '58.5');
+            busLight12.setAttributeNS(null, 'fill', '#fff');
+
+            let busLight22 = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+            busLight22.setAttributeNS(null, 'id', 'light2');
+            busLight22.setAttributeNS(null, 'ry', '24.5');
+            busLight22.setAttributeNS(null, 'rx', '19.5');
+            busLight22.setAttributeNS(null, 'cy', '306.5');
+            busLight22.setAttributeNS(null, 'cx', '60.5');
+            busLight22.setAttributeNS(null, 'fill', '#fff');
+
+            busHolder2.appendChild(busPath2);
+            busHolder2.appendChild(busLight12);
+            busHolder2.appendChild(busLight22);
+
+            // busHolder.setAttributeNS(null, 'transform', 'rotate(' + (bus.Heading + 90) + ')');
+            busHolder2.style.webkitTransform = 'rotate(' + (bus.Heading + 90) + 'deg)';
+            // busHolder.setAttributeNS(null, 'style', 'transform-origin: center; transform-origin: center;');
+
+            let text2 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            text2.setAttributeNS(null, 'id', 'busNum');
+            text2.setAttributeNS(null, 'x', '50%');
+            text2.setAttributeNS(null, 'y', '51%');
+            text2.setAttributeNS(null, 'dominant-baseline', 'middle');
+            text2.setAttributeNS(null, 'text-anchor', 'middle');
+            text2.setAttributeNS(null, 'fill', gradientColor); // Change
+            text2.setAttributeNS(null, 'font-size', '150');
+            text2.setAttributeNS(null, 'font-weight', '700');
+            text2.setAttributeNS(null, 'font-family', '"Source Sans Pro", sans-serif');
+            text2.textContent = bus.RouteShortName;
+
+            markerSvg2.appendChild(busHolder2);
+            markerSvg2.appendChild(text2);
+            markerContainer2.appendChild(markerSvg2);
+
+            let popup2 = new mapboxgl.Popup({ offset: 10 })
+              .setText(bus.RouteShortName);
+
+            let marker2 = new mapboxgl.Marker(markerContainer2, { offset: [0, 0] })
+              .setLngLat([bus.Longitude, bus.Latitude])
+              .setPopup(popup2);
+
+            this.heatBusMarkers.push(marker2);
+
+            marker2.getElement().addEventListener('click', () => {
+              this.goToBus(map, bus);
+            });
           });
         });
       });
@@ -360,7 +458,7 @@ export class HomePage {
     this.stopsForRoute = [];
     this.selectedTitle = bus.RouteShortName;
     this.selectedSubTitle = bus.Destination;
-    this.selectedPassengerCount = Math.floor(bus.OnBoard/60 * 100);
+    this.selectedPassengerCount = Math.floor(bus.OnBoard / 60 * 100);
     this.selectedStatus = bus.DisplayStatus;
 
     this.busService.getStopsForBus(bus).then((stops: Stop[]) => {
@@ -391,9 +489,6 @@ export class HomePage {
   }
 
   goToStop(map, stop) {
-
-    console.log(stop);
-  
 
     this.arrivalBuses = [];
     this.stopsForRoute = [];
