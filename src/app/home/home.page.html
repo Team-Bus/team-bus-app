@@ -2,76 +2,79 @@
 </ion-header>
 
 <ion-content no-bounce>
-  <ion-searchbar #searchBar (ionCancel)="cancelSearch()" (ionBlur)="fixMap()" (ionFocus)="openSearch($event)" (ionInput)="runSearch($event)"
-    (ionClear)="clearSearch()" placeholder="Search" class="searchBar"></ion-searchbar>
-    <ion-fab id='settingsFab' slot="fixed">
-      <ion-fab-button size="small">
-        <ion-icon name="settings"></ion-icon>
-      </ion-fab-button>
-    </ion-fab>
-    <ion-fab id='locateFab' (click)="goToUserLocation()" slot="fixed">
-      <ion-fab-button size="small">
-        <ion-icon name="locate"></ion-icon>
-      </ion-fab-button>
-    </ion-fab>
-    <ion-fab id='heatFab' slot="fixed">
-      <ion-fab-button size="small">
-        <!-- color-palette -->
-        <ion-icon name="flame"></ion-icon>
-      </ion-fab-button>
-    </ion-fab>
+  <ion-searchbar #searchBar (ionCancel)="cancelSearch()" (ionBlur)="fixMap()" (ionFocus)="openSearch($event)"
+    (ionInput)="runSearch($event)" (ionClear)="clearSearch()" placeholder="Search" class="searchBar"></ion-searchbar>
+  <ion-fab id='settingsFab' slot="fixed">
+    <ion-fab-button size="small">
+      <ion-icon name="settings"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+  <ion-fab id='locateFab' (click)="goToUserLocation()" slot="fixed">
+    <ion-fab-button size="small">
+      <ion-icon name="locate"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+  <ion-fab id='heatFab' slot="fixed">
+    <ion-fab-button size="small">
+      <!-- color-palette -->
+      <ion-icon name="flame"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
   <div #map class="map"></div>
   <ion-bottom-drawer [disableDrag]="disableDrag" [(state)]="drawerState" [minimumHeight]="minimumHeight"
     [dockedHeight]="dockedHeight" [shouldBounce]="shouldBounce" [distanceTop]="distanceTop">
     <div class="drawer-content">
-      <ion-card *ngIf="needInfo">
-        <ion-card-header>
-          <ion-card-title>{{selectedTitle}}
-            <ion-chip style="pointer-events:none;" *ngIf="selectedStatus != null">
-              <ion-icon name="time" color="dark"></ion-icon>
-              <ion-label>{{selectedStatus}}</ion-label>
-            </ion-chip>
-            <ion-chip style="pointer-events:none;" *ngIf="selectedStatus != null">
-              <ion-icon name="contacts" color="dark"></ion-icon>
-              <ion-label>{{selectedPassengerCount}}</ion-label>
-            </ion-chip>
-          </ion-card-title>
-          <ion-card-subtitle>{{selectedSubTitle}}</ion-card-subtitle>
-          <ion-list *ngIf="arrivalBuses.length > 0">
-            <div>
-              <ion-card *ngFor="let depart of arrivalBuses">
-                <ion-card-header>
-                  <ion-card-title>{{depart.Bus.RouteShortName}}
-                  </ion-card-title>
-                  <ion-card-subtitle>{{depart.Bus.Destination}}</ion-card-subtitle>
-                  <ion-card-subtitle>Scheduled Arrival: {{depart.STA}} <ion-chip style="pointer-events:none;" *ngIf="depart.Dev != '00:00:00'" outline='true' color="danger">
-                      <ion-label>Late: +{{depart.Dev}}</ion-label>
-                    </ion-chip>
-                  </ion-card-subtitle>
-                  <ion-card-subtitle>Predicted Arrival: {{depart.ETA}}
-                  </ion-card-subtitle>
-                  <ion-button class="goButton" color="success" (click)="goToBus(mapRef, depart.Bus)">FIND</ion-button>
-                </ion-card-header>
-              </ion-card>
-            </div>
-          </ion-list>
-          <ion-list *ngIf="stopsForRoute.length > 0">
-            <div>
-              <ion-card *ngFor="let stop of stopsForRoute">
-                <ion-card-header>
-                  <ion-card-title>{{stop.Name}}
-                  </ion-card-title>
-                  <ion-card-subtitle>{{stop.Description}}</ion-card-subtitle>
-                  <ion-button class="goButton" color="success" (click)="goToStop(mapRef, stop)">FIND</ion-button>
-                </ion-card-header>
-              </ion-card>
-            </div>
-          </ion-list>
-        </ion-card-header>
-      </ion-card>
-      <ion-list *ngIf="!needInfo">
-        <div>
-          <ion-card *ngFor="let stop of matchingStops">
+      <div *ngIf="needInfo">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>{{selectedTitle}}
+              <ion-chip style="pointer-events:none;" *ngIf="selectedStatus != null">
+                <ion-icon name="time" color="dark"></ion-icon>
+                <ion-label>{{selectedStatus}}</ion-label>
+              </ion-chip>
+              <ion-chip style="pointer-events:none;" *ngIf="selectedStatus != null">
+                <ion-icon name="contacts" color="dark"></ion-icon>
+                <ion-label>{{selectedPassengerCount}}</ion-label>
+              </ion-chip>
+            </ion-card-title>
+            <ion-card-subtitle>{{selectedSubTitle}}</ion-card-subtitle>
+          </ion-card-header>
+        </ion-card>
+        <ion-list style="padding-bottom: 75px;" *ngIf="arrivalBuses.length > 0">
+          <ion-item *ngFor="let depart of arrivalBuses">
+            <ion-card style="width:100%;">
+              <ion-card-header>
+                <ion-card-title>{{depart.Bus.RouteShortName}}
+                </ion-card-title>
+                <ion-card-subtitle>{{depart.Bus.Destination}}</ion-card-subtitle>
+                <ion-card-subtitle>Scheduled Arrival: {{depart.STA}} <ion-chip style="pointer-events:none;"
+                    *ngIf="depart.Dev != '00:00:00'" outline='true' color="danger">
+                    <ion-label>Late: +{{depart.Dev}}</ion-label>
+                  </ion-chip>
+                </ion-card-subtitle>
+                <ion-card-subtitle>Predicted Arrival: {{depart.ETA}}
+                </ion-card-subtitle>
+                <ion-button class="goButton" color="success" (click)="goToBus(mapRef, depart.Bus)">FIND</ion-button>
+              </ion-card-header>
+            </ion-card>
+          </ion-item>
+        </ion-list>
+        <ion-list style="padding-bottom: 75px;" *ngIf="stopsForRoute.length > 0">
+          <ion-item *ngFor="let stop of stopsForRoute">
+            <ion-card style="width:100%;">
+              <ion-card-header>
+                <ion-card-title>{{stop.Name}}
+                </ion-card-title>
+                <ion-card-subtitle>{{stop.Description}}</ion-card-subtitle>
+                <ion-button class="goButton" color="success" (click)="goToStop(mapRef, stop)">FIND</ion-button>
+              </ion-card-header>
+            </ion-card>
+          </ion-item>
+        </ion-list>
+      </div>
+      <ion-list style="padding-bottom: 75px;" *ngIf="!needInfo">
+        <ion-item *ngFor="let stop of matchingStops">
+          <ion-card style="width:100%;">
             <ion-card-header>
               <ion-card-title>{{stop.Name}}
               </ion-card-title>
@@ -79,7 +82,9 @@
               <ion-button class="goButton" color="success" (click)="goToStop(mapRef, stop)">FIND</ion-button>
             </ion-card-header>
           </ion-card>
-          <ion-card *ngFor="let bus of matchingBuses">
+        </ion-item>
+        <ion-item *ngFor="let bus of matchingBuses">
+          <ion-card style="width:100%;">
             <ion-card-header>
               <ion-card-title>{{bus.RouteShortName}}
               </ion-card-title>
@@ -87,7 +92,7 @@
               <ion-button class="goButton" color="success" (click)="goToBus(mapRef, bus)">FIND</ion-button>
             </ion-card-header>
           </ion-card>
-        </div>
+        </ion-item>
       </ion-list>
     </div>
   </ion-bottom-drawer>
