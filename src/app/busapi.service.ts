@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import mapboxgl from 'mapbox-gl';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -75,11 +77,33 @@ export class BusapiService {
         stops.forEach(stop => {
 
           let routeStop = new Stop(stop);
-          routeStops.push(routeStop);
+
+          if(routeStop.Latitude == null || routeStop.Longitude == null){
+            // Invalid Stop
+          } else {
+            routeStops.push(routeStop);
+          }
         });
+        //routeStops.sort((a, b) => a.StopId - b.StopId);
+
         resolve(routeStops);
       })
     })
+  }
+
+  getMatch(coordinates, radius, profile) {
+    let radiuses  = radius.join(';');
+
+    return new Promise(resolve => {
+
+      let matchRequest = this.httpClient.get('https://api.mapbox.com/matching/v5/mapbox/' + profile + '/' + coordinates + '?geometries=geojson&radiuses=' + radiuses + '&steps=true&access_token=' + mapboxgl.accessToken)
+      matchRequest.subscribe(data => {
+        let coords = data["matchings"][0]["geometry"];
+
+        console.log(coords);
+        resolve(coords);
+      })
+    });
   }
 
   getNextBusesForStop(stopID) {
@@ -130,6 +154,8 @@ export class BusapiService {
   }
 
   getClosestStop(lat: number, long: number) {
+
+    mapboxgl.accessToken = environment.mapbox.accessToken;
 
     return new Promise(resolve => {
 

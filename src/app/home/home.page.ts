@@ -46,7 +46,7 @@ export class HomePage {
   colorBusMarkers = [];
   heatBusMarkers = [];
 
-  gradient = ["#2bd500","#55aa00","#7f8000","#aa5500","#d52b00"];
+  gradient = ["#2bd500", "#55aa00", "#7f8000", "#aa5500", "#d52b00"];
 
   enableDashScroll() {
     this.disableDrag = false;
@@ -369,8 +369,6 @@ export class HomePage {
             // Heat Map Bus
 
             let gradientColor = this.gradient[Math.floor((bus.OnBoard / 60) * 5)];
-            console.log(Math.floor((bus.OnBoard / 60) * 5));
-
 
             let markerContainer2 = document.createElement('div');
             markerContainer2.className = 'svg-container';
@@ -453,6 +451,11 @@ export class HomePage {
 
   goToBus(map, bus) {
 
+    if (map.getLayer('route')) {
+      map.removeLayer('route');
+      map.removeSource('route');
+    }
+
     this.needInfo = true;
     this.arrivalBuses = [];
     this.stopsForRoute = [];
@@ -463,6 +466,50 @@ export class HomePage {
 
     this.busService.getStopsForBus(bus).then((stops: Stop[]) => {
       this.stopsForRoute = stops;
+      let coords = [];
+
+      stops.forEach(stop => {
+        let lat = stop.Latitude;
+        let long = stop.Longitude;
+
+        let point = [long, lat];
+
+        coords.push(point);
+      });
+
+      coords.push(coords[0]);
+
+      let radius = [];
+
+      let newCoords = coords.join(';');
+
+      coords.forEach(c => {
+        radius.push(20);
+      });
+      
+      this.busService.getMatch(newCoords, radius, 'driving').then(matchedCoords => {
+        map.addLayer({
+          "id": "route",
+          "type": "line",
+          "source": {
+            "type": "geojson",
+            "data": {
+              "type": "Feature",
+              "properties": {},
+              "geometry": matchedCoords
+            }
+          },
+          "layout": {
+            "line-join": "round",
+            "line-cap": "round"
+          },
+          "paint": {
+            "line-color": '#' + bus.Color,
+            "line-width": 4
+          }
+        });
+      });
+
     });
 
     if (bus.Deviation != 0) {
@@ -489,6 +536,11 @@ export class HomePage {
   }
 
   goToStop(map, stop) {
+
+    if (map.getLayer('route')) {
+      map.removeLayer('route');
+      map.removeSource('route');
+    }
 
     this.arrivalBuses = [];
     this.stopsForRoute = [];
