@@ -266,6 +266,8 @@ export class HomePage {
 
             let busHolder = document.createElementNS('http://www.w3.org/2000/svg', 'g');
             busHolder.setAttributeNS(null, 'id', 'busHolder');
+            busHolder.style.webkitTransformStyle = 'fill-box';
+            busHolder.style.webkitTransformOrigin = 'center';
 
             let busPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
             busPath.setAttributeNS(null, 'id', 'busProps');
@@ -292,8 +294,9 @@ export class HomePage {
             busHolder.appendChild(busLight1);
             busHolder.appendChild(busLight2);
 
-            busHolder.setAttributeNS(null, 'transform', 'rotate(' + (bus.Heading + 90) + ')');
-            busHolder.setAttributeNS(null, 'style', 'transform-origin: center; transform-origin: center;');
+            // busHolder.setAttributeNS(null, 'transform', 'rotate(' + (bus.Heading + 90) + ')');
+            busHolder.style.webkitTransform = 'rotate(' + (bus.Heading + 90) + 'deg)';
+            // busHolder.setAttributeNS(null, 'style', 'transform-origin: center; transform-origin: center;');
 
             let text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
             text.setAttributeNS(null, 'id', 'busNum');
