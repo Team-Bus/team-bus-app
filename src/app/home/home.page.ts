@@ -241,14 +241,17 @@ export class HomePage {
             markerSvg.appendChild(text);
             markerContainer.appendChild(markerSvg);
 
+            let popup = new mapboxgl.Popup({ offset: 25 })
+              .setText(stop.Name);
+
             let marker = new mapboxgl.Marker(markerContainer, { offset: [0, 0], cluster: true })
               .setLngLat([stop.Longitude, stop.Latitude])
+              .setPopup(popup)
               .addTo(map);
 
             marker.getElement().addEventListener('click', () => {
               this.goToStop(map, stop);
             });
-
           });
 
           this.busService.sortedBuses.forEach((bus) => {
@@ -314,8 +317,12 @@ export class HomePage {
             markerSvg.appendChild(text);
             markerContainer.appendChild(markerSvg);
 
+            let popup = new mapboxgl.Popup({ offset: 25 })
+              .setText(bus.RouteShortName);
+
             let marker = new mapboxgl.Marker(markerContainer, { offset: [0, 0] })
               .setLngLat([bus.Longitude, bus.Latitude])
+              .setPopup(popup)
               .addTo(map);
 
             marker.getElement().addEventListener('click', () => {

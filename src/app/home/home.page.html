@@ -16,6 +16,7 @@
     </ion-fab>
     <ion-fab id='heatFab' slot="fixed">
       <ion-fab-button size="small">
+        <!-- color-palette -->
         <ion-icon name="flame"></ion-icon>
       </ion-fab-button>
     </ion-fab>
@@ -26,11 +27,11 @@
       <ion-card *ngIf="needInfo">
         <ion-card-header>
           <ion-card-title>{{selectedTitle}}
-            <ion-chip *ngIf="selectedStatus != null">
+            <ion-chip style="pointer-events:none;" *ngIf="selectedStatus != null">
               <ion-icon name="time" color="dark"></ion-icon>
               <ion-label>{{selectedStatus}}</ion-label>
             </ion-chip>
-            <ion-chip *ngIf="selectedStatus != null">
+            <ion-chip style="pointer-events:none;" *ngIf="selectedStatus != null">
               <ion-icon name="contacts" color="dark"></ion-icon>
               <ion-label>{{selectedPassengerCount}}</ion-label>
             </ion-chip>
@@ -43,8 +44,8 @@
                   <ion-card-title>{{depart.Bus.RouteShortName}}
                   </ion-card-title>
                   <ion-card-subtitle>{{depart.Bus.Destination}}</ion-card-subtitle>
-                  <ion-card-subtitle>Scheduled Arrival: {{depart.STA}} <ion-chip *ngIf="depart.Dev != '00:00:00'" outline='true' color="danger">
-                      <ion-label>+{{depart.Dev}} Late</ion-label>
+                  <ion-card-subtitle>Scheduled Arrival: {{depart.STA}} <ion-chip style="pointer-events:none;" *ngIf="depart.Dev != '00:00:00'" outline='true' color="danger">
+                      <ion-label>Late: +{{depart.Dev}}</ion-label>
                     </ion-chip>
                   </ion-card-subtitle>
                   <ion-card-subtitle>Predicted Arrival: {{depart.ETA}}
