@@ -20,7 +20,7 @@ export class HomePage {
 
   shouldBounce = true;
   disableDrag = false;
-  dockedHeight = 250;
+  dockedHeight = 350;
   distanceTop = 70;
   drawerState = DrawerState.Bottom;
   states = DrawerState;
@@ -32,9 +32,15 @@ export class HomePage {
   selectedStatus = 'Late';
   needInfo = true;
 
+  routeMode = false;
+
+  selectedItem = null;
+
   showNormal = true;
 
   mapRef = null;
+
+  route = null;
 
   matchingBuses = [];
   matchingStops = [];
@@ -174,6 +180,81 @@ export class HomePage {
         }
       });
     }
+  }
+
+  exitRoute() {
+    this.routeMode = false;
+    this.route = null;
+
+    if (this.mapRef.getLayer('route')) {
+      this.mapRef.removeLayer('route');
+      this.mapRef.removeSource('route');
+    }
+
+  }
+
+  getRoute(map, stop) {
+
+    this.busService.getClosestStop(this.userLocation.latitude, this.userLocation.longitude).then(cStop => {
+
+      let nStop = new Stop(cStop);
+
+      if (stop.StopId == nStop.StopId) {
+        return;
+      }
+
+      this.busService.findRoute(stop, nStop).then(route => {
+        this.route = route;
+        this.routeMode = true;
+
+        if (this.mapRef.getLayer('route')) {
+          this.mapRef.removeLayer('route');
+          this.mapRef.removeSource('route');
+        }
+
+        let routeCoords = [];
+
+        this.route.steps.forEach(step => {
+          
+          let aCoords = [step.arrivalCoords.lng, step.arrivalCoords.lat];
+          routeCoords.push(aCoords);
+
+          let dCoords = [step.departureCoords.lng, step.departureCoords.lat];
+          routeCoords.push(dCoords);
+        });
+
+        let radius = [];
+
+        let newCoords = routeCoords.join(';');
+
+        routeCoords.forEach(c => {
+          radius.push(20);
+        });
+
+        this.busService.getMatch(newCoords, radius, 'driving').then(matchedCoords => {
+          this.mapRef.addLayer({
+            "id": "route",
+            "type": "line",
+            "source": {
+              "type": "geojson",
+              "data": {
+                "type": "Feature",
+                "properties": {},
+                "geometry": matchedCoords
+              }
+            },
+            "layout": {
+              "line-join": "round",
+              "line-cap": "round"
+            },
+            "paint": {
+              "line-color": '#00FF00',
+              "line-width": 4
+            }
+          });
+        });
+      });
+    });
   }
 
   ionViewDidEnter() {
@@ -476,49 +557,52 @@ export class HomePage {
 
     this.busService.getStopsForBus(bus).then((stops: Stop[]) => {
       this.stopsForRoute = stops;
-      let coords = [];
 
-      stops.forEach(stop => {
-        let lat = stop.Latitude;
-        let long = stop.Longitude;
+      if (!this.routeMode) {
+        let coords = [];
 
-        let point = [long, lat];
+        stops.forEach(stop => {
+          let lat = stop.Latitude;
+          let long = stop.Longitude;
 
-        coords.push(point);
-      });
+          let point = [long, lat];
 
-      coords.push(coords[0]);
-
-      let radius = [];
-
-      let newCoords = coords.join(';');
-
-      coords.forEach(c => {
-        radius.push(20);
-      });
-      
-      this.busService.getMatch(newCoords, radius, 'driving').then(matchedCoords => {
-        map.addLayer({
-          "id": "route",
-          "type": "line",
-          "source": {
-            "type": "geojson",
-            "data": {
-              "type": "Feature",
-              "properties": {},
-              "geometry": matchedCoords
-            }
-          },
-          "layout": {
-            "line-join": "round",
-            "line-cap": "round"
-          },
-          "paint": {
-            "line-color": '#' + bus.Color,
-            "line-width": 4
-          }
+          coords.push(point);
         });
-      });
+
+        coords.push(coords[0]);
+
+        let radius = [];
+
+        let newCoords = coords.join(';');
+
+        coords.forEach(c => {
+          radius.push(20);
+        });
+
+        this.busService.getMatch(newCoords, radius, 'driving').then(matchedCoords => {
+          map.addLayer({
+            "id": "route",
+            "type": "line",
+            "source": {
+              "type": "geojson",
+              "data": {
+                "type": "Feature",
+                "properties": {},
+                "geometry": matchedCoords
+              }
+            },
+            "layout": {
+              "line-join": "round",
+              "line-cap": "round"
+            },
+            "paint": {
+              "line-color": '#' + bus.Color,
+              "line-width": 4
+            }
+          });
+        });
+      }
 
     });
 
@@ -550,14 +634,17 @@ export class HomePage {
 
   goToStop(map, stop) {
 
-    if (map.getLayer('route')) {
-      map.removeLayer('route');
-      map.removeSource('route');
+    if (!this.routeMode) {
+      if (map.getLayer('route')) {
+        map.removeLayer('route');
+        map.removeSource('route');
+      }
     }
 
     this.arrivalBuses = [];
     this.stopsForRoute = [];
     this.needInfo = true;
+    this.selectedItem = stop;
     this.selectedTitle = stop.Name;
     this.selectedSubTitle = stop.Description;
     this.selectedPassengerCount = null;

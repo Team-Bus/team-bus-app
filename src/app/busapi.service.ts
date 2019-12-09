@@ -99,8 +99,6 @@ export class BusapiService {
       let matchRequest = this.httpClient.get('https://api.mapbox.com/matching/v5/mapbox/' + profile + '/' + coordinates + '?geometries=geojson&radiuses=' + radiuses + '&steps=true&access_token=' + mapboxgl.accessToken)
       matchRequest.subscribe(data => {
         let coords = data["matchings"][0]["geometry"];
-
-        console.log(coords);
         resolve(coords);
       })
     });
@@ -167,6 +165,45 @@ export class BusapiService {
     });
   }
 
+  findRoute(stopB: Stop, stopA: Stop) {
+
+    return new Promise(resolve => {
+      let routeRequest = this.httpClient.get('http://team-bus-backend.herokuapp.com/api/stop/transfer?from=' + stopA.StopId + '&to=' + stopB.StopId);
+      routeRequest.subscribe(data => {
+
+        console.log(data);
+
+
+        let route = new Route();
+
+        route.arrivalTime = data["routes"][0]["arrival_time"]["text"];
+        route.depatureTime = data["routes"][0]["departure_time"]["text"];
+        route.distance = data["routes"][0]["distance"]["text"];
+        route.duration = data["routes"][0]["duration"]["text"];
+
+        route.steps = [];
+
+        data["routes"][0]["steps"].forEach(step => {
+          let nStep = new Step();
+
+          nStep.arrivalStop = step["arrival_stop"]["name"];
+          nStep.arrivalTime = step["arrival_time"]["text"];
+
+          nStep.arrivalCoords = step["arrival_stop"]["location"];
+          nStep.departureCoords = step["departure_stop"]["location"];
+
+          nStep.bus = step["route_short_name"];
+          nStep.departStop = step["departure_stop"]["name"];
+          nStep.departTime = step["departure_time"]["text"];
+          
+          route.steps.push(nStep);
+        });
+
+
+        resolve(route);
+      })
+    });
+  }
 }
 
 export class Departure {
@@ -183,6 +220,24 @@ export class Departure {
     this.Dev = dev;
     this.OriginalSTA = orgSTA;
   }
+}
+
+export class Step {
+  departStop: string
+  departTime: string
+  arrivalStop: string
+  arrivalTime: string
+  arrivalCoords: any
+  departureCoords: any
+  bus: string
+}
+
+export class Route {
+  steps: Step[]
+  arrivalTime: string
+  depatureTime: string
+  distance: string
+  duration: string
 }
 
 

@@ -39,7 +39,7 @@
         </div>
       </div>
       <div scrollY="true" id="myScrollDiv">
-        <div *ngIf="needInfo">
+        <div *ngIf="needInfo && !routeMode">
           <ion-card>
             <ion-card-header>
               <ion-card-title>{{selectedTitle}}
@@ -64,6 +64,9 @@
                 </ion-chip>
               </ion-card-title>
               <ion-card-subtitle>{{selectedSubTitle}}</ion-card-subtitle>
+              <div *ngIf="!selectedStatus" class="goButton">
+                <ion-button color="secondary" (click)="getRoute(mapRef, selectedItem)">ROUTE</ion-button>
+              </div>
             </ion-card-header>
           </ion-card>
           <ion-list style="padding-bottom: 75px;" *ngIf="arrivalBuses.length > 0">
@@ -92,20 +95,67 @@
                   <ion-card-title>{{stop.Name}}
                   </ion-card-title>
                   <ion-card-subtitle>{{stop.Description}}</ion-card-subtitle>
-                  <ion-button class="goButton" color="success" (click)="goToStop(mapRef, stop)">FIND</ion-button>
+                  <div class="goButton">
+                    <ion-button color="success" (click)="goToStop(mapRef, stop)">FIND</ion-button>
+                  </div>
                 </ion-card-header>
               </ion-card>
             </ion-item>
           </ion-list>
         </div>
-        <ion-list style="padding-bottom: 75px;" *ngIf="!needInfo">
+        <div *ngIf="routeMode">
+          <ion-card>
+            <ion-card-header>
+              <ion-card-title>Route</ion-card-title>
+              <ion-card-subtitle>Based on Current Location</ion-card-subtitle>
+              <ion-chip style="pointer-events:none;">
+                <ion-icon name="calendar" color="dark"></ion-icon>
+                <ion-label>Depart: {{route.depatureTime}}</ion-label>
+              </ion-chip>
+              <ion-chip style="pointer-events:none;">
+                <ion-icon name="calendar" color="dark"></ion-icon>
+                <ion-label>Arrive: {{route.arrivalTime}}</ion-label>
+              </ion-chip>
+              <ion-chip style="pointer-events:none;">
+                <ion-icon name="time" color="dark"></ion-icon>
+                <ion-label>{{route.duration}}</ion-label>
+              </ion-chip>
+              <ion-chip style="pointer-events:none;">
+                <ion-icon name="bus" color="dark"></ion-icon>
+                <ion-label>{{route.distance}}</ion-label>
+              </ion-chip>
+            </ion-card-header>
+            <div class="goButton">
+              <ion-button (click)="exitRoute()" color="danger">EXIT</ion-button>
+            </div>
+          </ion-card>
+          <ion-list style="padding-bottom: 75px;">
+            <ion-item *ngFor="let step of route.steps">
+              <ion-card style="width:50%">
+                <ion-card-header>
+                  <ion-card-title>Depart: {{step.departStop}}</ion-card-title>
+                  <ion-card-subtitle>{{step.bus}} @ {{step.departTime}}</ion-card-subtitle>
+                </ion-card-header>
+              </ion-card>
+              <ion-card style="width:50%">
+                <ion-card-header>
+                  <ion-card-title>Arrive: {{step.arrivalStop}}</ion-card-title>
+                  <ion-card-subtitle>{{step.bus}} @ {{step.arrivalTime}}</ion-card-subtitle>
+                </ion-card-header>
+              </ion-card>
+            </ion-item>
+          </ion-list>
+        </div>
+        <ion-list style="padding-bottom: 75px;" *ngIf="!needInfo && !routeMode">
           <ion-item *ngFor="let stop of matchingStops">
             <ion-card style="width:100%;">
               <ion-card-header>
                 <ion-card-title>{{stop.Name}}
                 </ion-card-title>
                 <ion-card-subtitle>{{stop.Description}}</ion-card-subtitle>
-                <ion-button class="goButton" color="success" (click)="goToStop(mapRef, stop)">FIND</ion-button>
+                <div class="goButton">
+                  <ion-button color="success" (click)="goToStop(mapRef, stop)">FIND</ion-button>
+                </div>
               </ion-card-header>
             </ion-card>
           </ion-item>
