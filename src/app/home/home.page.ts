@@ -66,11 +66,6 @@ export class HomePage {
     const modal = await this.modalController.create({
       component: InformationPage
     });
-
-    modal.onDidDismiss().then((data) => {
-      console.log(data);
-    });
-
     return await modal.present();
   }
 
