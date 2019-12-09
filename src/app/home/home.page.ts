@@ -1,5 +1,5 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
-import { NavController, ModalController } from '@ionic/angular';
+import { NavController, ModalController, ToastController } from '@ionic/angular';
 import { environment } from '../../environments/environment';
 import { DrawerState } from 'ion-bottom-drawer';
 import mapboxgl from 'mapbox-gl';
@@ -66,7 +66,7 @@ export class HomePage {
 
   @ViewChild('map', { static: false }) map: ElementRef;
 
-  constructor(public navCtrl: NavController, private busService: BusapiService, private geolocation: Geolocation, public modalController: ModalController) { }
+  constructor(public navCtrl: NavController, private busService: BusapiService, private geolocation: Geolocation, public modalController: ModalController, public toastController: ToastController) { }
 
   async openModal() {
     const modal = await this.modalController.create({
@@ -186,6 +186,8 @@ export class HomePage {
     this.routeMode = false;
     this.route = null;
 
+    this.drawerState = DrawerState.Bottom;
+
     if (this.mapRef.getLayer('route')) {
       this.mapRef.removeLayer('route');
       this.mapRef.removeSource('route');
@@ -200,12 +202,15 @@ export class HomePage {
       let nStop = new Stop(cStop);
 
       if (stop.StopId == nStop.StopId) {
+        this.presentToast("You are already within walking distance to this stop.");
         return;
       }
 
       this.busService.findRoute(stop, nStop).then(route => {
         this.route = route;
         this.routeMode = true;
+
+        this.drawerState = DrawerState.Docked;
 
         if (this.mapRef.getLayer('route')) {
           this.mapRef.removeLayer('route');
@@ -248,7 +253,7 @@ export class HomePage {
               "line-cap": "round"
             },
             "paint": {
-              "line-color": '#00FF00',
+              "line-color": '#0000FF',
               "line-width": 4
             }
           });
@@ -256,6 +261,16 @@ export class HomePage {
       });
     });
   }
+
+  async presentToast(text: string) {
+    const toast = await this.toastController.create({
+      message: text,
+      position: 'middle',
+      duration: 2000
+    });
+    toast.present();
+  }
+
 
   ionViewDidEnter() {
 
@@ -613,10 +628,6 @@ export class HomePage {
     if (bus.Deviation < 0) {
       this.selectedStatus = 'Early' + ': ' + -bus.Deviation + ' min';
     }
-
-
-
-
 
     map.flyTo({
       center: [bus.Longitude, bus.Latitude],
