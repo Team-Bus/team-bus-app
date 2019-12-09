@@ -16,11 +16,13 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 
+import { InformationPageModule } from './information/information.module';
+
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
-  imports: [BrowserModule, HttpClientModule, IonicModule.forRoot({
-    mode: 'md'
+  imports: [BrowserModule, HttpClientModule, InformationPageModule, IonicModule.forRoot({
+    mode: 'ios'
   }), AppRoutingModule, IonBottomDrawerModule],
   providers: [
     StatusBar,

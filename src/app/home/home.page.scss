@@ -29,6 +29,14 @@ div[scrolly=true] {
     z-index: 1;
 }
 
+#pullBar {
+    background: lightgrey;
+    margin:0 auto;
+    width: 75%;
+    height: 10px;
+    border-radius: 10px;
+}
+
 #heatFab {
     top: 110px;
     right: 0px;

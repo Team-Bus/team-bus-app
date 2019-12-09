@@ -24,7 +24,7 @@
       <ion-icon name="refresh"></ion-icon>
     </ion-fab-button>
   </ion-fab>
-  <ion-fab id='settingsFab' slot="fixed">
+  <ion-fab id='settingsFab' (click)="openModal()" slot="fixed">
     <ion-fab-button size="small">
       <ion-icon name="information-circle-outline"></ion-icon>
     </ion-fab-button>
@@ -33,8 +33,11 @@
   <ion-bottom-drawer [disableDrag]="disableDrag" [(state)]="drawerState" [minimumHeight]="minimumHeight"
     [dockedHeight]="dockedHeight" [shouldBounce]="shouldBounce" [distanceTop]="distanceTop">
     <div class="drawer-content">
-      <div style='background:white; width:100%; height:50px;' class='drawerActuator' (touchstart)='enableDashScroll()'
-        (touchend)='disableDashScroll()'> </div>
+      <div style='background:white; width:100%; height:30px;' class='drawerActuator' (touchstart)='enableDashScroll()'
+        (touchend)='disableDashScroll()'>
+        <div id='pullBar'>
+        </div>
+      </div>
       <div scrollY="true" id="myScrollDiv">
         <div *ngIf="needInfo">
           <ion-card>

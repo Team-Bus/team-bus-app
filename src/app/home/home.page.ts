@@ -1,11 +1,13 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
-import { NavController } from '@ionic/angular';
+import { NavController, ModalController } from '@ionic/angular';
 import { environment } from '../../environments/environment';
 import { DrawerState } from 'ion-bottom-drawer';
 import mapboxgl from 'mapbox-gl';
 import { BusapiService, Departure, Stop } from '../busapi.service';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import StringSimilarity from 'string-similarity';
+import { InformationPage } from '../information/information.page';
+
 
 const stringSimilarity = StringSimilarity;
 
@@ -19,7 +21,7 @@ export class HomePage {
   shouldBounce = true;
   disableDrag = false;
   dockedHeight = 250;
-  distanceTop = 60;
+  distanceTop = 70;
   drawerState = DrawerState.Bottom;
   states = DrawerState;
   minimumHeight = 150;
@@ -58,7 +60,20 @@ export class HomePage {
 
   @ViewChild('map', { static: false }) map: ElementRef;
 
-  constructor(public navCtrl: NavController, private busService: BusapiService, private geolocation: Geolocation) { }
+  constructor(public navCtrl: NavController, private busService: BusapiService, private geolocation: Geolocation, public modalController: ModalController) { }
+
+  async openModal() {
+    const modal = await this.modalController.create({
+      component: InformationPage
+    });
+
+    modal.onDidDismiss().then((data) => {
+      console.log(data);
+    });
+
+    return await modal.present();
+  }
+
 
   runSearch(ev: any) {
     let searchValue = ev.target.value;
@@ -519,6 +534,9 @@ export class HomePage {
     if (bus.Deviation < 0) {
       this.selectedStatus = 'Early' + ': ' + -bus.Deviation + ' min';
     }
+
+
+
 
 
     map.flyTo({
