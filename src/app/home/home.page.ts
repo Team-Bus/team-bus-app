@@ -3,7 +3,7 @@ import { NavController, ModalController, ToastController } from '@ionic/angular'
 import { environment } from '../../environments/environment';
 import { DrawerState } from 'ion-bottom-drawer';
 import mapboxgl from 'mapbox-gl';
-import { BusapiService, Departure, Stop } from '../busapi.service';
+import { BusapiService, Departure, Stop, Bus } from '../busapi.service';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import StringSimilarity from 'string-similarity';
 import { InformationPage } from '../information/information.page';
@@ -16,6 +16,7 @@ const stringSimilarity = StringSimilarity;
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
+
 export class HomePage {
 
   shouldBounce = true;
@@ -26,9 +27,9 @@ export class HomePage {
   states = DrawerState;
   minimumHeight = 150;
 
-  selectedTitle = 'Default Title'
-  selectedSubTitle = 'Default Subtitle'
-  selectedPassengerCount = 1337;
+  selectedTitle = 'Loading Stop'
+  selectedSubTitle = 'Loading Stop'
+  selectedPassengerCount = 1234;
   selectedStatus = 'Late';
   needInfo = true;
 
@@ -73,6 +74,47 @@ export class HomePage {
       component: InformationPage
     });
     return await modal.present();
+  }
+
+  refreshMap() {
+    this.presentToast("Refreshing Bus Positions");
+
+    this.busService.getBuses().then(buses => {
+      this.colorBusMarkers.forEach(bus => {
+        let matchingBus = null;
+        this.busService.sortedBuses.forEach(sortedBus => {
+          if(sortedBus.Latitude == bus._lngLat.lat && sortedBus.Longitude == bus._lngLat.lng) {
+            matchingBus = sortedBus;
+          }
+        });
+
+        let newBuses = buses as Bus[];
+
+        newBuses.forEach(newBus => {
+          if(matchingBus.VehicleId == newBus.VehicleId) {
+            bus.setLngLat([newBus.Longitude, newBus.Latitude])
+          }
+        });
+
+      });
+
+      this.heatBusMarkers.forEach(bus => {
+        let matchingBus = null;
+        this.busService.sortedBuses.forEach(sortedBus => {
+          if(sortedBus.Latitude == bus._lngLat.lat && sortedBus.Longitude == bus._lngLat.lng) {
+            matchingBus = sortedBus;
+          }
+        });
+
+        let newBuses = buses as Bus[];
+
+        newBuses.forEach(newBus => {
+          if(matchingBus.VehicleId == newBus.VehicleId) {
+            bus.setLngLat([newBus.Longitude, newBus.Latitude])
+          }
+        });
+      });
+    });
   }
 
 
@@ -202,7 +244,7 @@ export class HomePage {
       let nStop = new Stop(cStop);
 
       if (stop.StopId == nStop.StopId) {
-        this.presentToast("You are already within walking distance to this stop.");
+        this.presentToast("This is already the closest stop to your location.");
         return;
       }
 
@@ -271,8 +313,10 @@ export class HomePage {
     toast.present();
   }
 
-
   ionViewDidEnter() {
+
+    let t = this;
+    setInterval(function() {t.refreshMap();}, 300000);
 
     this.busService.getBuses().then((buses) => {
 
@@ -433,6 +477,17 @@ export class HomePage {
             busLight2.setAttributeNS(null, 'cx', '60.5');
             busLight2.setAttributeNS(null, 'fill', '#fff');
 
+            let busBackground = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            busBackground.setAttribute('id', 'svg_5');
+            busBackground.setAttribute('height', '221');
+            busBackground.setAttribute('width', '295');
+            busBackground.setAttribute('y', '146');
+            busBackground.setAttribute('x', '108');
+            busBackground.setAttribute('stroke-width', '0');
+            busBackground.setAttribute('stroke', '#000000');
+            busBackground.setAttribute('fill', '#ffffff')
+
+            busHolder.appendChild(busBackground);
             busHolder.appendChild(busPath);
             busHolder.appendChild(busLight1);
             busHolder.appendChild(busLight2);
@@ -513,6 +568,17 @@ export class HomePage {
             busLight22.setAttributeNS(null, 'cx', '60.5');
             busLight22.setAttributeNS(null, 'fill', '#fff');
 
+            let busBackground2 = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            busBackground2.setAttribute('id', 'svg_5');
+            busBackground2.setAttribute('height', '221');
+            busBackground2.setAttribute('width', '295');
+            busBackground2.setAttribute('y', '146');
+            busBackground2.setAttribute('x', '108');
+            busBackground2.setAttribute('stroke-width', '0');
+            busBackground2.setAttribute('stroke', '#000000');
+            busBackground2.setAttribute('fill', '#ffffff')
+
+            busHolder2.appendChild(busBackground2);
             busHolder2.appendChild(busPath2);
             busHolder2.appendChild(busLight12);
             busHolder2.appendChild(busLight22);
